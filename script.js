@@ -1,18 +1,17 @@
 let currentSport = "football";
 let secretPlayer = null;
 let currentGuesses = 0;
-const maxGuesses = 8; // Max limit fixed to 8
+const maxGuesses = 8;
 
-// Sport Specific Modal Text Configuration Objects
 const sportInstructions = {
-    football: "Welcome to Statle Football! Guess the mystery NFL skill position athlete (QB, RB, WR, TE) using regular season metrics. \n\n💡 YELLOW indicators pop up if your guess falls within 250 Yards or within 2 TDs of the target!",
-    basketball: "Welcome to Statle Basketball! Find the hidden NBA star based on points, assists, and rebounds.",
-    baseball: "Welcome to Statle Baseball! Track down the MLB player using home runs, batting average, and position clues.",
-    hockey: "Welcome to Statle Hockey! Uncover the NHL star through goals, points, and team dynamics.",
-    soccer: "Welcome to Statle Soccer! Pinpoint the global football athlete using metrics across leagues."
+    football: "Welcome to Statle Football! Guess the mystery NFL skill player (QB, RB, WR, TE) from the 2025-2026 season.\n\n💡 Yellow means within 250 Yards or 2 TDs!",
+    basketball: "Welcome to Statle Basketball! Guess the hidden NBA player based on their season stats.",
+    baseball: "Welcome to Statle Baseball! Track down the hidden MLB player.",
+    hockey: "Welcome to Statle Hockey! Uncover the daily NHL star.",
+    soccer: "Welcome to Statle Soccer! Pinpoint the soccer standout."
 };
 
-// UI DOM Targets
+// UI DOM Links
 const searchInput = document.getElementById("player-search");
 const autocompleteList = document.getElementById("autocomplete-list");
 const submitBtn = document.getElementById("submit-guess");
@@ -24,7 +23,6 @@ const modalTitle = document.getElementById("modal-title");
 const modalText = document.getElementById("modal-text");
 const closeModalBtn = document.getElementById("close-modal-btn");
 
-// Handle Modals Trigger Alerts
 function showInstructions() {
     modalTitle.textContent = currentSport.toUpperCase() + " RULES";
     modalText.innerText = sportInstructions[currentSport];
@@ -33,16 +31,17 @@ function showInstructions() {
 closeModalBtn.onclick = () => modal.style.display = "none";
 
 function updateThemeAndState() {
-    // Re-skin system backgrounds dynamically
     document.body.className = `${currentSport}-theme`;
     counterDisplay.textContent = `Guesses: ${currentGuesses} / ${maxGuesses}`;
 }
 
+// 1. SELECT DAILY SECRET PLAYER WITH STATE SAVING
 function setDailyPlayer() {
     const today = new Date();
+    const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     const dayIdentifier = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-    const sportPool = playersDatabase[currentSport];
     
+    const sportPool = playersDatabase[currentSport];
     if (!sportPool || sportPool.length === 0) {
         secretPlayer = null;
         return;
@@ -57,20 +56,53 @@ function setDailyPlayer() {
     submitBtn.disabled = false;
     
     updateThemeAndState();
-    showInstructions(); // Triggers the rule summary instantly on change
+
+    // Check Local Storage history cache
+    const savedState = localStorage.getItem(`statle_${currentSport}_${dayKey}`);
+    if (savedState) {
+        const gameHistory = JSON.parse(savedState);
+        gameHistory.guesses.forEach(guessName => {
+            renderGuessRow(guessName, false); // Restores rows without triggering popups
+        });
+        if (gameHistory.gameOver) {
+            lockInputSystem();
+        }
+    } else {
+        showInstructions();
+    }
 }
 
-// AUTOCOMPLETE DROPDOWN FILTER
+// Save state helper
+function saveGameStateToStorage() {
+    const today = new Date();
+    const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+    const currentRows = Array.from(guessesRows.children).map(row => row.children[0].textContent.replace(/[↑↓]/g, '').trim());
+    
+    const isWin = currentRows.includes(secretPlayer.name);
+    const isLoss = currentGuesses >= maxGuesses;
+
+    const stateToSave = {
+        guesses: currentRows,
+        gameOver: isWin || isLoss
+    };
+    localStorage.setItem(`statle_${currentSport}_${dayKey}`, JSON.stringify(stateToSave));
+}
+
+// 2. FIXED ALPHABETICAL SEARCH MATCH ENGINE
 searchInput.addEventListener("input", function() {
-    const val = this.value.toUpperCase();
+    const val = this.value.trim().toUpperCase();
     autocompleteList.innerHTML = "";
     if (!val) return false;
 
     const sportPool = playersDatabase[currentSport];
     sportPool.forEach(player => {
-        if (player.name.toUpperCase().includes(val)) {
+        const names = player.name.toUpperCase().split(" ");
+        // Verifies if either First Name OR Last Name starts with typed characters
+        const matchFound = names.some(part => part.startsWith(val));
+
+        if (matchFound) {
             const item = document.createElement("div");
-            item.innerHTML = `<strong>${player.name.substr(0, val.length)}</strong>${player.name.substr(val.length)} (${player.position})`;
+            item.innerHTML = `<strong>${player.name}</strong> (${player.position})`;
             item.addEventListener("click", function() {
                 searchInput.value = player.name;
                 autocompleteList.innerHTML = "";
@@ -82,20 +114,27 @@ searchInput.addEventListener("input", function() {
 
 document.addEventListener("click", (e) => { if (e.target !== searchInput) autocompleteList.innerHTML = ""; });
 
-// COMPARISON MATCH ENGINE
-function handleGuess(guessedPlayerName) {
+// 3. EXECUTE GUESS WRAPPER
+function handleGuessSubmit() {
+    const name = searchInput.value;
+    renderGuessRow(name, true);
+}
+
+function renderGuessRow(guessedPlayerName, triggerAlerts) {
     const sportPool = playersDatabase[currentSport];
     const guessedPlayer = sportPool.find(p => p.name.toUpperCase() === guessedPlayerName.toUpperCase());
 
     if (!guessedPlayer) {
-        alert("Player not found in database.");
+        if (triggerAlerts) alert("Player not found in database.");
         return;
     }
 
     currentGuesses++;
     counterDisplay.textContent = `Guesses: ${currentGuesses} / ${maxGuesses}`;
-    autocompleteList.innerHTML = "";
-    searchInput.value = "";
+    if (triggerAlerts) {
+        autocompleteList.innerHTML = "";
+        searchInput.value = "";
+    }
 
     const row = document.createElement("div");
     row.className = "row";
@@ -128,7 +167,6 @@ function handleGuess(guessedPlayerName) {
                 const arrow = guessVal < secretVal ? " ↑" : " ↓";
                 cell.textContent = guessVal + arrow;
 
-                // Yellow Condition Check Logic Evaluation Blocks
                 if (currentSport === "football" && category.key === "yards" && Math.abs(guessVal - secretVal) <= 250) {
                     cell.classList.add("partial");
                 } else if (currentSport === "football" && category.key === "tds" && Math.abs(guessVal - secretVal) <= 2) {
@@ -142,23 +180,32 @@ function handleGuess(guessedPlayerName) {
     });
 
     guessesRows.appendChild(row);
+    if (triggerAlerts) saveGameStateToStorage();
 
-    if (guessedPlayer.name === secretPlayer.name) {
-        alert("🎉 Spectacular! You matched the target player!");
-        searchInput.disabled = true; submitBtn.disabled = true;
-    } else if (currentGuesses >= maxGuesses) {
-        alert(`Out of options! The secret target was: ${secretPlayer.name}`);
-        searchInput.disabled = true; submitBtn.disabled = true;
+    // DELAY ALERTS: Lets cells render fully green before popping victory alerts
+    if (triggerAlerts) {
+        setTimeout(() => {
+            if (guessedPlayer.name === secretPlayer.name) {
+                alert("🎉 Spectacular! You matched the target player!");
+                lockInputSystem();
+            } else if (currentGuesses >= maxGuesses) {
+                alert(`Out of options! The secret target was: ${secretPlayer.name}`);
+                lockInputSystem();
+            }
+        }, 150);
     }
 }
 
-submitBtn.addEventListener("click", () => handleGuess(searchInput.value));
-searchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleGuess(searchInput.value); });
+function lockInputSystem() {
+    searchInput.disabled = true;
+    submitBtn.disabled = true;
+}
 
-// Initialize System Board
+submitBtn.addEventListener("click", handleGuessSubmit);
+searchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleGuessSubmit(); });
+
 setDailyPlayer();
 
-// Navigation Tabs Triggers
 const tabs = document.querySelectorAll('.tab-btn');
 tabs.forEach(tab => {
     tab.addEventListener('click', (e) => {
