@@ -9,9 +9,9 @@ const playersDatabase = {
   { name: "Drake Maye", position: "QB", team: "NE", yards: 4844, tds: 35, jersey: 10, age: 23 },
   { name: "Dak Prescott", position: "QB", team: "DAL", yards: 4729, tds: 32, jersey: 4, age: 32 },
   { name: "Josh Allen", position: "QB", team: "BUF", yards: 4247, tds: 39, jersey: 17, age: 29 },
-  { name: "Goff Jared", position: "QB", team: "DET", yards: 4609, tds: 34, jersey: 16, age: 31 },
-  { name: "Stafford Matthew", position: "QB", team: "LAR", yards: 4708, tds: 46, jersey: 9, age: 37 }, // AP MVP
-  { name: "Lawrence Trevor", position: "QB", team: "JAX", yards: 4366, tds: 38, jersey: 16, age: 26 },
+  { name: "Jared Goff", position: "QB", team: "DET", yards: 4609, tds: 34, jersey: 16, age: 31 },
+  { name: "Matthew Stafford", position: "QB", team: "LAR", yards: 4708, tds: 46, jersey: 9, age: 37 }, // AP MVP
+  { name: "Trevor Lawrence", position: "QB", team: "JAX", yards: 4366, tds: 38, jersey: 16, age: 26 },
   { name: "Caleb Williams", position: "QB", team: "CHI", yards: 4330, tds: 30, jersey: 18, age: 24 },
   { name: "Bo Nix", position: "QB", team: "DEN", yards: 4287, tds: 30, jersey: 10, age: 25 },
   { name: "Justin Herbert", position: "QB", team: "LAC", yards: 4225, tds: 28, jersey: 10, age: 27 },
@@ -124,7 +124,7 @@ const playersDatabase = {
   { name: "Deebo Samuel", position: "WR", team: "WAS", yards: 802, tds: 6, jersey: 1, age: 29 },
   { name: "Troy Franklin", position: "WR", team: "DEN", yards: 709, tds: 6, jersey: 11, age: 22 },
   { name: "Khalil Shakir", position: "WR", team: "BUF", yards: 719, tds: 4, jersey: 10, age: 25 },
-  { name: "Jakobi Meyers", position: "WR", team: "2TM", yards: 835, tds: 3, jersey: 3, age: 29 },
+  { name: "Jakobi Meyers", position: "WR", team: "JAX", yards: 835, tds: 3, jersey: 3, age: 29 },
 
 
 // ============================= TIGHT ENDS =============================
