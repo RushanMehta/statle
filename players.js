@@ -6,7 +6,6 @@ const playersDatabase = {
 
 // ============================= QUARTERBACKS =============================
 // yards/tds = passing + rushing combined
-const quarterbacks = [
   { name: "Drake Maye", position: "QB", team: "NE", yards: 4844, tds: 35, jersey: 10, age: 23 },
   { name: "Dak Prescott", position: "QB", team: "DAL", yards: 4729, tds: 32, jersey: 4, age: 32 },
   { name: "Josh Allen", position: "QB", team: "BUF", yards: 4247, tds: 39, jersey: 17, age: 29 },
@@ -59,11 +58,10 @@ const quarterbacks = [
   { name: "Philip Rivers", position: "QB", team: "IND", yards: 544, tds: 4, jersey: 17, age: 44 },
   { name: "Riley Leonard", position: "QB", team: "IND", yards: 415, tds: 2, jersey: 15, age: 23 },
   { name: "Anthony Richardson", position: "QB", team: "IND", yards: 9, tds: 0, jersey: 5, age: 23 }, // 2 games, injured
-];
+
 
 // ============================= RUNNING BACKS =============================
 // yards/tds = rushing + receiving combined
-const runningBacks = [
   { name: "Bijan Robinson", position: "RB", team: "ATL", yards: 2298, tds: 11, jersey: 7, age: 23 },
   { name: "Christian McCaffrey", position: "RB", team: "SF", yards: 2126, tds: 17, jersey: 23, age: 29 }, // AP-1, AP CPoY-1
   { name: "Jonathan Taylor", position: "RB", team: "IND", yards: 1963, tds: 20, jersey: 28, age: 26 },
@@ -94,11 +92,9 @@ const runningBacks = [
   { name: "David Montgomery", position: "RB", team: "DET", yards: 908, tds: 8, jersey: 5, age: 28 },
   { name: "Zach Charbonnet", position: "RB", team: "SEA", yards: 730, tds: 12, jersey: 26, age: 24 }, // receiving not confirmed
   { name: "Omarion Hampton", position: "RB", team: "LAC", yards: 737, tds: 5, jersey: 28, age: 22 }, // injury-shortened
-];
 
 // ============================= WIDE RECEIVERS =============================
 // yards/tds = receiving + rushing combined
-const wideReceivers = [
   { name: "Puka Nacua", position: "WR", team: "LAR", yards: 1820, tds: 11, jersey: 17, age: 24 }, // AP-1
   { name: "Jaxon Smith-Njigba", position: "WR", team: "SEA", yards: 1793, tds: 10, jersey: 11, age: 23 }, // AP OPoY
   { name: "George Pickens", position: "WR", team: "DAL", yards: 1429, tds: 9, jersey: 3, age: 24 },
@@ -129,11 +125,10 @@ const wideReceivers = [
   { name: "Troy Franklin", position: "WR", team: "DEN", yards: 709, tds: 6, jersey: 11, age: 22 },
   { name: "Khalil Shakir", position: "WR", team: "BUF", yards: 719, tds: 4, jersey: 10, age: 25 },
   { name: "Jakobi Meyers", position: "WR", team: "2TM", yards: 835, tds: 3, jersey: 3, age: 29 },
-];
+
 
 // ============================= TIGHT ENDS =============================
 // yards/tds = receiving + rushing combined
-const tightEnds = [
   { name: "Trey McBride", position: "TE", team: "ARI", yards: 1239, tds: 11, jersey: 85, age: 26 }, // AP-1
   { name: "Kyle Pitts", position: "TE", team: "ATL", yards: 928, tds: 5, jersey: 8, age: 25 },
   { name: "Juwan Johnson", position: "TE", team: "NO", yards: 889, tds: 3, jersey: 83, age: 29 },
@@ -154,7 +149,6 @@ const tightEnds = [
   { name: "Evan Engram", position: "TE", team: "DEN", yards: 461, tds: 1, jersey: 1, age: 31 },
   { name: "T.J. Hockenson", position: "TE", team: "MIN", yards: 438, tds: 3, jersey: 87, age: 28 },
   { name: "Mark Andrews", position: "TE", team: "BAL", yards: 470, tds: 6, jersey: 89, age: 30 },
-];
     ],
     basketball: [],
     baseball: [],
