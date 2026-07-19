@@ -1,0 +1,125 @@
+body {
+    background-color: #121213;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    text-align: center;
+}
+
+header {
+    border-bottom: 1px solid #3a3a3c;
+    padding-bottom: 10px;
+}
+
+.sports-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.tab-btn {
+    background-color: #272729;
+    color: #aaa;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+.tab-btn.active, .tab-btn:hover {
+    background-color: #1a73e8;
+    color: white;
+}
+
+#game-container {
+    max-width: 600px;
+    margin: 20px auto;
+    padding: 0 10px;
+}
+
+#stats-display {
+    background-color: #1a1a1c;
+    border: 1px solid #3a3a3c;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+.search-box {
+    position: relative;
+    display: inline-block;
+    width: 70%;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #272729;
+    border: 1px solid #3a3a3c;
+    color: white;
+    border-radius: 4px;
+}
+
+#submit-guess {
+    padding: 10px 20px;
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* Autocomplete suggestions dropdown */
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #3a3a3c;
+    background-color: #272729;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 200px;
+    overflow-y: auto;
+    text-align: left;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+}
+
+.autocomplete-items div:hover {
+    background-color: #3a3a3c;
+}
+
+/* Row results styling */
+#guesses-rows {
+    margin-top: 15px;
+}
+
+.row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+}
+
+.cell {
+    width: 16%;
+    padding: 10px 0;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Result Colors */
+.correct { background-color: #538d4e; } /* Green */
+.partial { background-color: #b59f3b; } /* Yellow */
+.wrong { background-color: #3a3a3c; }   /* Gray */
