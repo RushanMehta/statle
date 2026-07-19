@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statle - The Daily Sports Stat Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>STATLE</h1>
+        <p>Guess the mystery player based on their stats!</p>
+        
+        <nav class="sports-tabs">
+            <button class="tab-btn active" data-sport="football">Football</button>
+            <button class="tab-btn" data-sport="basketball">Basketball</button>
+            <button class="tab-btn" data-sport="baseball">Baseball</button>
+            <button class="tab-btn" data-sport="hockey">Hockey</button>
+            <button class="tab-btn" data-sport="soccer">Soccer</button>
+        </nav>
+    </header>
+
+    <main id="game-container">
+        <section id="stats-display">
+            <h3>Today's Clues:</h3>
+            <div id="clues-grid">
+                </div>
+        </section>
+
+        <section id="input-container">
+            <div class="search-box">
+                <input type="text" id="player-search" placeholder="Type a football player's name..." autocomplete="off">
+                <div id="autocomplete-list" class="autocomplete-items"></div>
+            </div>
+            <button id="submit-guess">Guess</button>
+        </section>
+
+        <section id="results-container">
+            <div class="results-header">
+                <span>Player</span>
+                <span>Team</span>
+                <span>Conf/Div</span>
+                <span>Stat 1</span>
+                <span>Stat 2</span>
+                <span>Age</span>
+            </div>
+            <div id="guesses-rows"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
