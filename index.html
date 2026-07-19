@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Statle - The Daily Sports Stat Game</title>
+    <title>Statle</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <header>
         <h1>STATLE</h1>
-        <p>Guess the mystery player based on their stats!</p>
-        
         <nav class="sports-tabs">
             <button class="tab-btn active" data-sport="football">Football</button>
             <button class="tab-btn" data-sport="basketball">Basketball</button>
@@ -23,14 +21,13 @@
 
     <main id="game-container">
         <section id="stats-display">
-            <h3>Today's Clues:</h3>
-            <div id="clues-grid">
-                </div>
+            <h3>Guess the Mystery Skill Player!</h3>
+            <p>Type a player's name below to reveal their stats compared to the target.</p>
         </section>
 
         <section id="input-container">
             <div class="search-box">
-                <input type="text" id="player-search" placeholder="Type a football player's name..." autocomplete="off">
+                <input type="text" id="player-search" placeholder="Type an NFL player's name..." autocomplete="off">
                 <div id="autocomplete-list" class="autocomplete-items"></div>
             </div>
             <button id="submit-guess">Guess</button>
@@ -39,16 +36,17 @@
         <section id="results-container">
             <div class="results-header">
                 <span>Player</span>
-    <span>Position</span>
-    <span>Total Yards</span>
-    <span>Total TDs</span>
-    <span>Jersey #</span>
-    <span>Age</span>
+                <span>Pos</span>
+                <span>Yds</span>
+                <span>TDs</span>
+                <span>#</span>
+                <span>Age</span>
             </div>
             <div id="guesses-rows"></div>
         </section>
     </main>
 
+    <script src="players.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
