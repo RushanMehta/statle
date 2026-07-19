@@ -17,14 +17,18 @@
             <button class="tab-btn" data-sport="hockey">Hockey</button>
             <button class="tab-btn" data-sport="soccer">Soccer</button>
         </nav>
+        <div id="guess-counter">Guesses: 0 / 8</div>
     </header>
 
-    <main id="game-container">
-        <section id="stats-display">
-            <h3>Guess the Mystery Skill Player!</h3>
-            <p>Type a player's name below to reveal their stats compared to the target.</p>
-        </section>
+    <div id="instructions-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">How To Play</h2>
+            <p id="modal-text">Instructions go here.</p>
+            <button id="close-modal-btn">Got It!</button>
+        </div>
+    </div>
 
+    <main id="game-container">
         <section id="input-container">
             <div class="search-box">
                 <input type="text" id="player-search" placeholder="Type an NFL player's name..." autocomplete="off">
