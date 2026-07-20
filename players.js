@@ -150,7 +150,10 @@ const playersDatabase = {
   { name: "T.J. Hockenson", position: "TE", team: "MIN", yards: 438, tds: 3, jersey: 87, age: 28 },
   { name: "Mark Andrews", position: "TE", team: "BAL", yards: 470, tds: 6, jersey: 89, age: 30 },
     ],
-    basketball: [],
+    basketball: [
+    { name: "Victor Wembanyama", position: "C", ppg: 23.5, apg: 3.8, rpg: 11.2, fg: 47, stocks: 4.8, jersey: 1, age: 22 },
+    { name: "Shai Gilgeous-Alexander", position: "PG", ppg: 30.1, apg: 6.4, rpg: 5.6, fg: 54, stocks: 2.9, jersey: 2, age: 28 },
+],
     baseball: [],
     hockey: [],
     soccer: []
