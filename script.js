@@ -64,7 +64,10 @@ function updateThemeAndState() {
     const config = sportConfigs[currentSport];
     
     // Adjust grid CSS automatically for Basketball's 7 columns vs Football's 6 columns
-    const columnsCss = config.categories.length === 7 ? "1.8fr 0.8fr 0.9fr 0.9fr 0.9fr 0.8fr 0.9fr" : "1.8fr 0.9fr 1.1fr 1.1fr 0.9fr 1fr";
+    // Replace the columnsCss lines with this:
+const columnsCss = config.categories.length === 9 
+    ? "1.6fr 0.6fr 0.7fr 0.7fr 0.7fr 0.8fr 0.7fr 0.6fr 0.6fr" 
+    : (config.categories.length === 7 ? "1.8fr 0.8fr 0.9fr 0.9fr 0.9fr 0.8fr 0.9fr" : "1.8fr 0.9fr 1.1fr 1.1fr 0.9fr 1fr");
     dynamicHeader.style.gridTemplateColumns = columnsCss;
     guessesRows.style.setProperty('--grid-cols', columnsCss);
 
