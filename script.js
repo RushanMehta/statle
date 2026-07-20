@@ -18,14 +18,16 @@ const sportConfigs = {
         ]
     },
     basketball: {
-        instructions: "Welcome to Statle Basketball! Guess the mystery NBA player from the 2025-2026 season.\n\n💡 Yellow means:\nPPG, APG, RPG: Within 2.0 | Jersey, Age: Within 2",
-        headers: ["Player", "Pos", "PPG", "APG", "RPG", "#", "Age"],
+        instructions: "Welcome to Statle Basketball! Guess the mystery NBA player from the 2025-2026 season.\n\n💡 Yellow means:\nPPG, APG, RPG, Stocks: Within 2.0 | FG%: Within 5% | Jersey, Age: Within 2",
+        headers: ["Player", "Pos", "PPG", "APG", "RPG", "FG%", "Stx", "#", "Age"],
         categories: [
             { key: 'name', type: 'match' },
             { key: 'position', type: 'match' },
             { key: 'ppg', type: 'number', thresh: 2 },
             { key: 'apg', type: 'number', thresh: 2 },
             { key: 'rpg', type: 'number', thresh: 2 },
+            { key: 'fg', type: 'number', thresh: 5 }, // Thresh set to 5%
+            { key: 'stocks', type: 'number', thresh: 2 },
             { key: 'jersey', type: 'number', thresh: 2 },
             { key: 'age', type: 'number', thresh: 2 }
         ]
