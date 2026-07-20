@@ -3,12 +3,33 @@ let secretPlayer = null;
 let currentGuesses = 0;
 const maxGuesses = 8;
 
-const sportInstructions = {
-    football: "Welcome to Statle Football! Guess the mystery NFL skill player (QB, RB, WR, TE) from the 2025-2026 season.\n\n💡 Yellow indicators mean:\nYards: Within 250\nTDs: Within 2\nJersey #: Within 2\nAge: Within 2",
-    basketball: "Welcome to Statle Basketball!\n\n💡 Yellow indicators mean:\nJersey #: Within 2\nAge: Within 2",
-    baseball: "Welcome to Statle Baseball!\n\n💡 Yellow indicators mean:\nJersey #: Within 2\nAge: Within 2",
-    hockey: "Welcome to Statle Hockey!\n\n💡 Yellow indicators mean:\nJersey #: Within 2\nAge: Within 2",
-    soccer: "Welcome to Statle Soccer!\n\n💡 Yellow indicators mean:\nJersey #: Within 2\nAge: Within 2"
+// Define sport configurations dynamically
+const sportConfigs = {
+    football: {
+        instructions: "Welcome to Statle Football! Guess the mystery NFL skill player from the 2025-2026 season.\n\n💡 Yellow means:\nYards: Within 250 | TDs, Jersey, Age: Within 2",
+        headers: ["Player", "Pos", "Yds", "TDs", "#", "Age"],
+        categories: [
+            { key: 'name', type: 'match' },
+            { key: 'position', type: 'match' },
+            { key: 'yards', type: 'number', thresh: 250 },
+            { key: 'tds', type: 'number', thresh: 2 },
+            { key: 'jersey', type: 'number', thresh: 2 },
+            { key: 'age', type: 'number', thresh: 2 }
+        ]
+    },
+    basketball: {
+        instructions: "Welcome to Statle Basketball! Guess the mystery NBA player from the 2025-2026 season.\n\n💡 Yellow means:\nPPG, APG, RPG: Within 2.0 | Jersey, Age: Within 2",
+        headers: ["Player", "Pos", "PPG", "APG", "RPG", "#", "Age"],
+        categories: [
+            { key: 'name', type: 'match' },
+            { key: 'position', type: 'match' },
+            { key: 'ppg', type: 'number', thresh: 2 },
+            { key: 'apg', type: 'number', thresh: 2 },
+            { key: 'rpg', type: 'number', thresh: 2 },
+            { key: 'jersey', type: 'number', thresh: 2 },
+            { key: 'age', type: 'number', thresh: 2 }
+        ]
+    }
 };
 
 const searchInput = document.getElementById("player-search");
@@ -17,6 +38,7 @@ const submitBtn = document.getElementById("submit-guess");
 const guessesRows = document.getElementById("guesses-rows");
 const counterDisplay = document.getElementById("guess-counter");
 const helpBtn = document.getElementById("rules-toggle-btn");
+const dynamicHeader = document.getElementById("dynamic-header");
 
 const modal = document.getElementById("instructions-modal");
 const modalTitle = document.getElementById("modal-title");
@@ -25,7 +47,7 @@ const closeModalBtn = document.getElementById("close-modal-btn");
 
 function showInstructions() {
     modalTitle.textContent = currentSport.toUpperCase() + " RULES";
-    modalText.innerText = sportInstructions[currentSport];
+    modalText.innerText = sportConfigs[currentSport].instructions;
     modal.style.display = "flex";
 }
 closeModalBtn.onclick = () => modal.style.display = "none";
@@ -34,6 +56,21 @@ helpBtn.onclick = () => showInstructions();
 function updateThemeAndState() {
     document.body.className = `${currentSport}-theme`;
     counterDisplay.textContent = `Guesses: ${currentGuesses} / ${maxGuesses}`;
+    
+    // Generate dynamic grid columns based on the selected sport config
+    dynamicHeader.innerHTML = "";
+    const config = sportConfigs[currentSport];
+    
+    // Adjust grid CSS automatically for Basketball's 7 columns vs Football's 6 columns
+    const columnsCss = config.categories.length === 7 ? "1.8fr 0.8fr 0.9fr 0.9fr 0.9fr 0.8fr 0.9fr" : "1.8fr 0.9fr 1.1fr 1.1fr 0.9fr 1fr";
+    dynamicHeader.style.gridTemplateColumns = columnsCss;
+    guessesRows.style.setProperty('--grid-cols', columnsCss);
+
+    config.headers.forEach(headerText => {
+        const span = document.createElement("span");
+        span.textContent = headerText;
+        dynamicHeader.appendChild(span);
+    });
 }
 
 function setDailyPlayer() {
@@ -66,7 +103,6 @@ function setDailyPlayer() {
         });
         if (gameHistory.gameOver) {
             lockInputSystem();
-            // If they lost previously, make sure the red reveal stays on reload
             if (currentGuesses >= maxGuesses && !gameHistory.won) {
                 revealCorrectPlayerRow();
             }
@@ -80,7 +116,7 @@ function saveGameStateToStorage(wonGame = false) {
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     const currentRows = Array.from(guessesRows.children)
-        .filter(row => !row.classList.contains('reveal-fail-row')) // don't save the red row itself
+        .filter(row => !row.classList.contains('reveal-fail-row'))
         .map(row => row.children[0].textContent.replace(/[↑↓]/g, '').trim());
     
     const isLoss = currentGuesses >= maxGuesses && !wonGame;
@@ -141,17 +177,11 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
 
     const row = document.createElement("div");
     row.className = "row";
+    row.style.gridTemplateColumns = sportConfigs[currentSport].categories.length === 7 ? "1.8fr 0.8fr 0.9fr 0.9fr 0.9fr 0.8fr 0.9fr" : "1.8fr 0.9fr 1.1fr 1.1fr 0.9fr 1fr";
 
-    const categories = [
-        { key: 'name', type: 'match' },
-        { key: 'position', type: 'match' },
-        { key: 'yards', type: 'number' },
-        { key: 'tds', type: 'number' },
-        { key: 'jersey', type: 'number' },
-        { key: 'age', type: 'number' }
-    ];
+    const config = sportConfigs[currentSport];
 
-    categories.forEach(category => {
+    config.categories.forEach(category => {
         const cell = document.createElement("div");
         cell.className = "cell";
         
@@ -170,14 +200,8 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
                 const arrow = guessVal < secretVal ? " ↑" : " ↓";
                 cell.textContent = guessVal + arrow;
 
-                // Dynamic Proximity Checking Matrix
-                if (currentSport === "football" && category.key === "yards" && Math.abs(guessVal - secretVal) <= 250) {
-                    cell.classList.add("partial");
-                } else if (currentSport === "football" && category.key === "tds" && Math.abs(guessVal - secretVal) <= 2) {
-                    cell.classList.add("partial");
-                } else if (category.key === "jersey" && Math.abs(guessVal - secretVal) <= 2) {
-                    cell.classList.add("partial");
-                } else if (category.key === "age" && Math.abs(guessVal - secretVal) <= 2) {
+                // Generalized Proximity Check using Thresh config values
+                if (Math.abs(guessVal - secretVal) <= category.thresh) {
                     cell.classList.add("partial");
                 } else {
                     cell.classList.add("wrong");
@@ -206,16 +230,16 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
     }
 }
 
-// Generates the Red Final Reveal row on game losses
 function revealCorrectPlayerRow() {
     const row = document.createElement("div");
     row.className = "row reveal-fail-row";
+    row.style.gridTemplateColumns = sportConfigs[currentSport].categories.length === 7 ? "1.8fr 0.8fr 0.9fr 0.9fr 0.9fr 0.8fr 0.9fr" : "1.8fr 0.9fr 1.1fr 1.1fr 0.9fr 1fr";
 
-    const categories = ['name', 'position', 'yards', 'tds', 'jersey', 'age'];
-    categories.forEach(key => {
+    const config = sportConfigs[currentSport];
+    config.categories.forEach(category => {
         const cell = document.createElement("div");
         cell.className = "cell revealed-fail";
-        cell.textContent = secretPlayer[key] !== undefined ? secretPlayer[key] : "N/A";
+        cell.textContent = secretPlayer[category.key] !== undefined ? secretPlayer[category.key] : "N/A";
         row.appendChild(cell);
     });
     guessesRows.appendChild(row);
