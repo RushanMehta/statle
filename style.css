@@ -27,7 +27,7 @@ body.baseball-theme {
 }
 body.hockey-theme { 
     background-image: linear-gradient(rgba(18, 18, 19, 0.8), rgba(18, 18, 19, 0.8)), 
-    url('https://images.unsplash.com/photo-1515703407324-5f753afe809f?q=80&w=1200'); 
+    url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8C0t_cW15SZJLoXppOPQCrREGsS6lmdMvtn8TguPCkUKlsFMfzW-Ywyyy&s=10'); 
 }
 body.soccer-theme { 
     background-image: linear-gradient(rgba(18, 18, 19, 0.8), rgba(18, 18, 19, 0.8)), 
