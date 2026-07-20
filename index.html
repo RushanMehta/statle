@@ -9,7 +9,7 @@
 <body>
 
     <header>
-        <h1>STATLE</h1>
+        <h1 class="main-title">STATLE</h1>
         <nav class="sports-tabs">
             <button class="tab-btn active" data-sport="football">Football</button>
             <button class="tab-btn" data-sport="basketball">Basketball</button>
@@ -17,12 +17,16 @@
             <button class="tab-btn" data-sport="hockey">Hockey</button>
             <button class="tab-btn" data-sport="soccer">Soccer</button>
         </nav>
-        <div id="guess-counter">Guesses: 0 / 8</div>
+        
+        <div class="action-bar">
+            <button id="rules-toggle-btn" title="View Instructions">❓ Help</button>
+            <div id="guess-counter">Guesses: 0 / 8</div>
+        </div>
     </header>
 
     <div id="instructions-modal" class="modal">
         <div class="modal-content">
-            <h2 id="modal-title">How To Play</h2>
+            <h2 id="modal-title">Rules</h2>
             <p id="modal-text">Instructions go here.</p>
             <button id="close-modal-btn">Got It!</button>
         </div>
@@ -31,7 +35,7 @@
     <main id="game-container">
         <section id="input-container">
             <div class="search-box">
-                <input type="text" id="player-search" placeholder="Type an NFL player's name..." autocomplete="off">
+                <input type="text" id="player-search" placeholder="Type a player's name..." autocomplete="off">
                 <div id="autocomplete-list" class="autocomplete-items"></div>
             </div>
             <button id="submit-guess">Guess</button>
