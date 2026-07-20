@@ -4,14 +4,13 @@ let currentGuesses = 0;
 const maxGuesses = 8;
 
 const sportInstructions = {
-    football: "Welcome to Statle Football! Guess the mystery NFL skill player (QB, RB, WR, TE) from the 2025-2026 season.\n\n💡 Yellow means within 250 Yards or 2 TDs!",
-    basketball: "Welcome to Statle Basketball! Guess the hidden NBA player based on their season stats.",
-    baseball: "Welcome to Statle Baseball! Track down the hidden MLB player.",
-    hockey: "Welcome to Statle Hockey! Uncover the daily NHL star.",
-    soccer: "Welcome to Statle Soccer! Pinpoint the soccer standout."
+    football: "Welcome to Statle Football! Guess the mystery NFL skill player (QB, RB, WR, TE) from the 2025-2026 season.\n\n💡 Yellow indicators mean:\nYards: Within 250\nTDs: Within 2\nJersey #: Within 2\nAge: Within 2",
+    basketball: "Welcome to Statle Basketball!\n\n💡 Yellow indicators mean:\nJersey #: Within 2\nAge: Within 2",
+    baseball: "Welcome to Statle Baseball!\n\n💡 Yellow indicators mean:\nJersey #: Within 2\nAge: Within 2",
+    hockey: "Welcome to Statle Hockey!\n\n💡 Yellow indicators mean:\nJersey #: Within 2\nAge: Within 2",
+    soccer: "Welcome to Statle Soccer!\n\n💡 Yellow indicators mean:\nJersey #: Within 2\nAge: Within 2"
 };
 
-// UI DOM Targets
 const searchInput = document.getElementById("player-search");
 const autocompleteList = document.getElementById("autocomplete-list");
 const submitBtn = document.getElementById("submit-guess");
@@ -37,13 +36,11 @@ function updateThemeAndState() {
     counterDisplay.textContent = `Guesses: ${currentGuesses} / ${maxGuesses}`;
 }
 
-// 1. DYNAMIC DATA ROUTER & GAME RETRIEVER
 function setDailyPlayer() {
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     const dayIdentifier = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
     
-    // Clear old visual boards entirely before compiling next sport parameters
     guessesRows.innerHTML = "";
     currentGuesses = 0;
     searchInput.disabled = false;
@@ -61,7 +58,6 @@ function setDailyPlayer() {
     
     updateThemeAndState();
 
-    // Independent localStorage loading based strictly on current sport signature
     const savedState = localStorage.getItem(`statle_${currentSport}_${dayKey}`);
     if (savedState) {
         const gameHistory = JSON.parse(savedState);
@@ -70,28 +66,33 @@ function setDailyPlayer() {
         });
         if (gameHistory.gameOver) {
             lockInputSystem();
+            // If they lost previously, make sure the red reveal stays on reload
+            if (currentGuesses >= maxGuesses && !gameHistory.won) {
+                revealCorrectPlayerRow();
+            }
         }
     } else {
-        showInstructions(); // Shows ONLY if no historical record exists for this specific day/sport
+        showInstructions();
     }
 }
 
-function saveGameStateToStorage() {
+function saveGameStateToStorage(wonGame = false) {
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-    const currentRows = Array.from(guessesRows.children).map(row => row.children[0].textContent.replace(/[↑↓]/g, '').trim());
+    const currentRows = Array.from(guessesRows.children)
+        .filter(row => !row.classList.contains('reveal-fail-row')) // don't save the red row itself
+        .map(row => row.children[0].textContent.replace(/[↑↓]/g, '').trim());
     
-    const isWin = currentRows.includes(secretPlayer.name);
-    const isLoss = currentGuesses >= maxGuesses;
+    const isLoss = currentGuesses >= maxGuesses && !wonGame;
 
     const stateToSave = {
         guesses: currentRows,
-        gameOver: isWin || isLoss
+        gameOver: wonGame || isLoss,
+        won: wonGame
     };
     localStorage.setItem(`statle_${currentSport}_${dayKey}`, JSON.stringify(stateToSave));
 }
 
-// 2. FILTER SEARCH LOGIC
 searchInput.addEventListener("input", function() {
     const val = this.value.trim().toUpperCase();
     autocompleteList.innerHTML = "";
@@ -118,10 +119,8 @@ searchInput.addEventListener("input", function() {
 
 document.addEventListener("click", (e) => { if (e.target !== searchInput) autocompleteList.innerHTML = ""; });
 
-// 3. RENDER MATRIX ENGINE
 function handleGuessSubmit() {
-    const name = searchInput.value;
-    renderGuessRow(name, true);
+    renderGuessRow(searchInput.value, true);
 }
 
 function renderGuessRow(guessedPlayerName, triggerAlerts) {
@@ -171,9 +170,14 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
                 const arrow = guessVal < secretVal ? " ↑" : " ↓";
                 cell.textContent = guessVal + arrow;
 
+                // Dynamic Proximity Checking Matrix
                 if (currentSport === "football" && category.key === "yards" && Math.abs(guessVal - secretVal) <= 250) {
                     cell.classList.add("partial");
                 } else if (currentSport === "football" && category.key === "tds" && Math.abs(guessVal - secretVal) <= 2) {
+                    cell.classList.add("partial");
+                } else if (category.key === "jersey" && Math.abs(guessVal - secretVal) <= 2) {
+                    cell.classList.add("partial");
+                } else if (category.key === "age" && Math.abs(guessVal - secretVal) <= 2) {
                     cell.classList.add("partial");
                 } else {
                     cell.classList.add("wrong");
@@ -184,20 +188,37 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
     });
 
     guessesRows.appendChild(row);
-    if (triggerAlerts) saveGameStateToStorage();
 
-    // Delays popups so items turn fully green on the screen before notification triggers
+    const won = guessedPlayer.name === secretPlayer.name;
+    if (triggerAlerts) saveGameStateToStorage(won);
+
     if (triggerAlerts) {
         setTimeout(() => {
-            if (guessedPlayer.name === secretPlayer.name) {
+            if (won) {
                 alert("🎉 Spectacular! You matched the target player!");
                 lockInputSystem();
             } else if (currentGuesses >= maxGuesses) {
+                revealCorrectPlayerRow();
                 alert(`Out of options! The secret target was: ${secretPlayer.name}`);
                 lockInputSystem();
             }
         }, 150);
     }
+}
+
+// Generates the Red Final Reveal row on game losses
+function revealCorrectPlayerRow() {
+    const row = document.createElement("div");
+    row.className = "row reveal-fail-row";
+
+    const categories = ['name', 'position', 'yards', 'tds', 'jersey', 'age'];
+    categories.forEach(key => {
+        const cell = document.createElement("div");
+        cell.className = "cell revealed-fail";
+        cell.textContent = secretPlayer[key] !== undefined ? secretPlayer[key] : "N/A";
+        row.appendChild(cell);
+    });
+    guessesRows.appendChild(row);
 }
 
 function lockInputSystem() {
@@ -208,10 +229,8 @@ function lockInputSystem() {
 submitBtn.addEventListener("click", handleGuessSubmit);
 searchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleGuessSubmit(); });
 
-// Initial Load
 setDailyPlayer();
 
-// Navigation Controller
 const tabs = document.querySelectorAll('.tab-btn');
 tabs.forEach(tab => {
     tab.addEventListener('click', (e) => {
