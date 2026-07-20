@@ -11,12 +11,13 @@ const sportInstructions = {
     soccer: "Welcome to Statle Soccer! Pinpoint the soccer standout."
 };
 
-// UI DOM Links
+// UI DOM Targets
 const searchInput = document.getElementById("player-search");
 const autocompleteList = document.getElementById("autocomplete-list");
 const submitBtn = document.getElementById("submit-guess");
 const guessesRows = document.getElementById("guesses-rows");
 const counterDisplay = document.getElementById("guess-counter");
+const helpBtn = document.getElementById("rules-toggle-btn");
 
 const modal = document.getElementById("instructions-modal");
 const modalTitle = document.getElementById("modal-title");
@@ -29,50 +30,52 @@ function showInstructions() {
     modal.style.display = "flex";
 }
 closeModalBtn.onclick = () => modal.style.display = "none";
+helpBtn.onclick = () => showInstructions();
 
 function updateThemeAndState() {
     document.body.className = `${currentSport}-theme`;
     counterDisplay.textContent = `Guesses: ${currentGuesses} / ${maxGuesses}`;
 }
 
-// 1. SELECT DAILY SECRET PLAYER WITH STATE SAVING
+// 1. DYNAMIC DATA ROUTER & GAME RETRIEVER
 function setDailyPlayer() {
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
     const dayIdentifier = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
     
+    // Clear old visual boards entirely before compiling next sport parameters
+    guessesRows.innerHTML = "";
+    currentGuesses = 0;
+    searchInput.disabled = false;
+    submitBtn.disabled = false;
+
     const sportPool = playersDatabase[currentSport];
     if (!sportPool || sportPool.length === 0) {
         secretPlayer = null;
+        updateThemeAndState();
         return;
     }
 
     const playerIndex = dayIdentifier % sportPool.length;
     secretPlayer = sportPool[playerIndex];
     
-    guessesRows.innerHTML = "";
-    currentGuesses = 0;
-    searchInput.disabled = false;
-    submitBtn.disabled = false;
-    
     updateThemeAndState();
 
-    // Check Local Storage history cache
+    // Independent localStorage loading based strictly on current sport signature
     const savedState = localStorage.getItem(`statle_${currentSport}_${dayKey}`);
     if (savedState) {
         const gameHistory = JSON.parse(savedState);
         gameHistory.guesses.forEach(guessName => {
-            renderGuessRow(guessName, false); // Restores rows without triggering popups
+            renderGuessRow(guessName, false); 
         });
         if (gameHistory.gameOver) {
             lockInputSystem();
         }
     } else {
-        showInstructions();
+        showInstructions(); // Shows ONLY if no historical record exists for this specific day/sport
     }
 }
 
-// Save state helper
 function saveGameStateToStorage() {
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
@@ -88,16 +91,17 @@ function saveGameStateToStorage() {
     localStorage.setItem(`statle_${currentSport}_${dayKey}`, JSON.stringify(stateToSave));
 }
 
-// 2. FIXED ALPHABETICAL SEARCH MATCH ENGINE
+// 2. FILTER SEARCH LOGIC
 searchInput.addEventListener("input", function() {
     const val = this.value.trim().toUpperCase();
     autocompleteList.innerHTML = "";
     if (!val) return false;
 
     const sportPool = playersDatabase[currentSport];
+    if (!sportPool) return;
+
     sportPool.forEach(player => {
         const names = player.name.toUpperCase().split(" ");
-        // Verifies if either First Name OR Last Name starts with typed characters
         const matchFound = names.some(part => part.startsWith(val));
 
         if (matchFound) {
@@ -114,7 +118,7 @@ searchInput.addEventListener("input", function() {
 
 document.addEventListener("click", (e) => { if (e.target !== searchInput) autocompleteList.innerHTML = ""; });
 
-// 3. EXECUTE GUESS WRAPPER
+// 3. RENDER MATRIX ENGINE
 function handleGuessSubmit() {
     const name = searchInput.value;
     renderGuessRow(name, true);
@@ -182,7 +186,7 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
     guessesRows.appendChild(row);
     if (triggerAlerts) saveGameStateToStorage();
 
-    // DELAY ALERTS: Lets cells render fully green before popping victory alerts
+    // Delays popups so items turn fully green on the screen before notification triggers
     if (triggerAlerts) {
         setTimeout(() => {
             if (guessedPlayer.name === secretPlayer.name) {
@@ -204,8 +208,10 @@ function lockInputSystem() {
 submitBtn.addEventListener("click", handleGuessSubmit);
 searchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleGuessSubmit(); });
 
+// Initial Load
 setDailyPlayer();
 
+// Navigation Controller
 const tabs = document.querySelectorAll('.tab-btn');
 tabs.forEach(tab => {
     tab.addEventListener('click', (e) => {
