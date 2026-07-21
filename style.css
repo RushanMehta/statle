@@ -12,28 +12,6 @@ body {
     background-attachment: fixed;
 }
 
-/* Secured, high-quality direct Unsplash links that bypass browser blocks */
-body.football-theme { 
-    background-image: linear-gradient(rgba(18, 18, 19, 0.8), rgba(18, 18, 19, 0.8)), 
-    url('https://images.unsplash.com/photo-1566577739112-5180d4bf9390?q=80&w=1200'); 
-}
-body.basketball-theme { 
-    background-image: linear-gradient(rgba(18, 18, 19, 0.85), rgba(18, 18, 19, 0.85)), 
-    url('https://images.stockcake.com/public/7/0/9/709fd827-cce3-40d5-bc75-6cff2b9c9f2e_large/indoor-basketball-court-stockcake.jpg'); 
-}
-body.baseball-theme { 
-    background-image: linear-gradient(rgba(18, 18, 19, 0.8), rgba(18, 18, 19, 0.8)), 
-    url('https://media.socastsrm.com/wordpress/wp-content/blogs.dir/2745/files/2021/06/baseball.jpg'); 
-}
-body.hockey-theme { 
-    background-image: linear-gradient(rgba(18, 18, 19, 0.8), rgba(18, 18, 19, 0.8)), 
-    url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS8C0t_cW15SZJLoXppOPQCrREGsS6lmdMvtn8TguPCkUKlsFMfzW-Ywyyy&s=10'); 
-}
-body.soccer-theme { 
-    background-image: linear-gradient(rgba(18, 18, 19, 0.8), rgba(18, 18, 19, 0.8)), 
-    url('https://images.unsplash.com/photo-1575361204480-aadea25e6e68?fm=jpg&q=60&w=3000&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1yZWxhdGVkfDE0fHx8ZW58MHx8fHx8'); 
-}
-
 header {
     background-color: rgba(24, 24, 27, 0.95);
     padding: 15px 0 10px 0;
@@ -42,7 +20,7 @@ header {
 }
 
 .main-title {
-    margin: 0 auto 12px auto;
+    margin: 0 auto 10px auto;
     font-size: 28px;
     letter-spacing: 2px;
     font-weight: 900;
@@ -52,7 +30,7 @@ header {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 20px;
+    gap: 15px;
     margin-top: 10px;
 }
 
@@ -65,7 +43,6 @@ header {
     font-weight: bold;
     border-radius: 4px;
     cursor: pointer;
-    transition: 0.2s;
 }
 
 #guess-counter {
@@ -76,10 +53,54 @@ header {
 
 #game-container {
     width: 100%;
-    max-width: 480px; 
+    max-width: 600px; 
     margin: 0 auto;
     padding: 15px 8px;
     box-sizing: border-box;
+}
+
+/* Hint System Area */
+#hint-bar {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.hint-btn {
+    background-color: #272729;
+    color: #888;
+    border: 1px solid #3a3a3c;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: not-allowed;
+    transition: all 0.2s;
+}
+
+.hint-btn.unlocked {
+    color: #ffd700;
+    border-color: #ffd700;
+    cursor: pointer;
+}
+
+.hint-btn.active-hint {
+    background-color: #ffd700;
+    color: #000;
+}
+
+#active-hint-display {
+    background-color: rgba(39, 39, 41, 0.9);
+    border: 1px solid #ffd700;
+    color: #ffd700;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 12px;
+    display: none;
 }
 
 #input-container {
@@ -87,15 +108,15 @@ header {
     justify-content: center;
     align-items: center;
     gap: 8px;
-    margin: 0 auto 20px auto;
+    margin: 0 auto 15px auto;
     width: 100%;
 }
 
 .search-box { position: relative; width: 75%; }
 input[type="text"] {
     width: 100%;
-    font-size: 16px; 
-    padding: 12px;
+    font-size: 15px; 
+    padding: 10px;
     background-color: #272729;
     border: 1px solid #3a3a3c;
     color: white;
@@ -104,8 +125,8 @@ input[type="text"] {
 }
 
 #submit-guess {
-    padding: 12px 16px;
-    font-size: 14px;
+    padding: 10px 14px;
+    font-size: 13px;
     background-color: #1a73e8;
     color: white;
     border: none;
@@ -114,12 +135,19 @@ input[type="text"] {
     font-weight: bold;
 }
 
+/* Horizontal Scroll Container for Responsive Grid */
+#results-container {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
 .results-header, .row {
     display: grid;
-    grid-template-columns: 1.8fr 0.9fr 1.1fr 1.1fr 0.9fr 1fr;
     gap: 3px;
     align-items: center;
-    width: 100%;
+    min-width: 500px; /* Guarantees single-line fit without wrapping */
+    margin-bottom: 4px;
 }
 
 .results-header span {
@@ -127,27 +155,42 @@ input[type="text"] {
     font-weight: bold;
     color: #b0b3b8;
     text-transform: uppercase;
-    padding-bottom: 5px;
+    text-align: center;
+    padding-bottom: 4px;
 }
 
 .cell {
     background-color: rgba(58, 58, 60, 0.95);
     font-size: 11px;
     font-weight: bold;
-    padding: 12px 1px;
+    padding: 8px 1px;
     border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    min-height: 22px;
+    min-height: 38px;
     box-sizing: border-box;
+    text-align: center;
+    line-height: 1.1;
+    overflow: hidden;
 }
+
+/* Font auto-scaling for extra long player names */
+.cell.name-cell {
+    font-size: 11px;
+    padding: 4px 2px;
+    white-space: normal;
+    word-break: break-word;
+}
+.cell.name-long { font-size: 9.5px !important; }
+.cell.name-extra-long { font-size: 8px !important; }
 
 .correct { background-color: #538d4e !important; }
 .partial { background-color: #b59f3b !important; }
 .wrong { background-color: #3a3a3c; }
-.revealed-fail { background-color: #b13636 !important; } /* Custom red row for final reveal */
+.revealed-fail { background-color: #b13636 !important; }
 
+/* Modals & Share System */
 .modal {
     display: none; 
     position: fixed;
@@ -162,25 +205,27 @@ input[type="text"] {
 }
 .modal-content {
     background-color: #1e1e1f;
-    padding: 24px;
+    padding: 20px;
     border-radius: 8px;
     max-width: 320px;
     text-align: center;
     border: 1px solid #3a3a3c;
 }
-#close-modal-btn {
-    background-color: #1a73e8;
+
+#share-btn {
+    background-color: #538d4e;
     color: white;
     border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
+    padding: 10px 18px;
     font-weight: bold;
+    border-radius: 6px;
     cursor: pointer;
     margin-top: 15px;
+    font-size: 14px;
 }
 
 .sports-tabs { display: flex; justify-content: center; gap: 4px; padding: 0 8px; }
 .tab-btn { background-color: #272729; color: #aaa; border: none; padding: 8px 6px; font-size: 12px; font-weight: bold; cursor: pointer; border-radius: 4px; flex: 1; }
 .tab-btn.active { background-color: #1a73e8; color: white; }
 .autocomplete-items { position: absolute; background-color: #272729; border: 1px solid #3a3a3c; z-index: 99; top: 100%; left: 0; right: 0; max-height: 150px; overflow-y: auto; text-align: left; }
-.autocomplete-items div { padding: 10px; cursor: pointer; font-size: 14px; border-bottom: 1px solid #323234; }
+.autocomplete-items div { padding: 10px; cursor: pointer; font-size: 13px; border-bottom: 1px solid #323234; }
