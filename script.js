@@ -7,7 +7,7 @@ let unlockedHintTier = 0;
 
 const sportConfigs = {
     football: {
-        instructions: "Welcome to Statle Football!\n\n💡 Yellow indicators mean:\nYards: Within 250 | TDs, Jersey, Age: Within 2\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
+        instructions: "Welcome to Statle Football!\n\n📅 STAT NOTE:\nAll stats are from the 2025-2026 NFL season.\n\n💡 Yellow indicators mean:\nYards: Within 250 | TDs, Jersey, Age: Within 2\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
         headers: ["Player", "Pos", "Yds", "TDs", "#", "Age"],
         categories: [
             { key: 'name', type: 'match' },
@@ -17,11 +17,10 @@ const sportConfigs = {
             { key: 'jersey', type: 'number', thresh: 2 },
             { key: 'age', type: 'number', thresh: 2 }
         ],
-        // Exact column pixel widths tight to stat titles
         gridCss: "130px 52px 65px 60px 52px 52px"
     },
     basketball: {
-        instructions: "Welcome to Statle Basketball!\n\n💡 Yellow indicators mean:\nPPG, APG, RPG, Stx: Within 2.0 | FG%: Within 5% | Jersey, Age: Within 2\n\n📌 Stat Note:\n'Stx' = Stocks (Steals + Blocks)\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
+        instructions: "Welcome to Statle Basketball!\n\n📅 STAT NOTE:\nAll stats are from the 2025-2026 NBA season.\n\n📌 Stat Abbreviation:\n'Stx' = Stocks (Steals + Blocks)\n\n💡 Yellow indicators mean:\nPPG, APG, RPG, Stx: Within 2.0 | FG%: Within 5% | Jersey, Age: Within 2\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
         headers: ["Player", "Pos", "PPG", "APG", "RPG", "FG%", "Stx", "#", "Age"],
         categories: [
             { key: 'name', type: 'match' },
@@ -34,7 +33,6 @@ const sportConfigs = {
             { key: 'jersey', type: 'number', thresh: 2 },
             { key: 'age', type: 'number', thresh: 2 }
         ],
-        // Exact tight column pixel widths fitting NBA box titles cleanly
         gridCss: "130px 48px 52px 52px 52px 52px 52px 48px 48px"
     }
 };
@@ -204,10 +202,9 @@ function setDailyPlayer() {
             if (currentGuesses >= maxGuesses && !gameHistory.won) {
                 revealCorrectPlayerRow();
             }
-            showEndGameModal(gameHistory.won);
+            // Show bottom share button for previously finished game, but DO NOT trigger popup
+            showBottomShareButton(gameHistory.won);
         }
-    } else {
-        showInstructions();
     }
 }
 
@@ -323,6 +320,7 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
     const won = guessedPlayer.name === secretPlayer.name;
     if (triggerAlerts) saveGameStateToStorage(won);
 
+    // Only fire popup alert and bottom share setup if this is a active guess submit
     if (triggerAlerts) {
         setTimeout(() => {
             if (won) {
@@ -337,29 +335,45 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
     }
 }
 
-function triggerShareAction(resultSummary) {
+// Uses native system share dialog (Messages, WhatsApp, etc.) with clipboard fallback
+async function triggerShareAction(resultSummary) {
     const shareText = `Statle (${currentSport.toUpperCase()}): ${resultSummary}\nhttps://statle.vercel.app`;
-    navigator.clipboard.writeText(shareText);
-    alert("Result copied to clipboard!");
+    
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: 'Statle Result',
+                text: shareText
+            });
+        } catch (err) {
+            // User canceled share or feature failed
+        }
+    } else {
+        navigator.clipboard.writeText(shareText);
+        alert("Result copied to clipboard!");
+    }
+}
+
+function getResultSummaryString(won) {
+    const hintTextStr = `${hintsUsedCount} hint${hintsUsedCount === 1 ? '' : 's'}`;
+    return won 
+        ? `Solved in ${currentGuesses} guess${currentGuesses === 1 ? '' : 'es'} with ${hintTextStr}!`
+        : `Unsuccessful today. The answer was ${secretPlayer.name}. Used ${hintTextStr}.`;
+}
+
+function showBottomShareButton(won) {
+    const resultSummary = getResultSummaryString(won);
+    shareBottomContainer.style.display = "block";
+    bottomShareBtn.onclick = () => triggerShareAction(resultSummary);
 }
 
 function showEndGameModal(won) {
     modalTitle.textContent = won ? "VICTORY!" : "GAME OVER";
-    const hintTextStr = `${hintsUsedCount} hint${hintsUsedCount === 1 ? '' : 's'}`;
-    const resultSummary = won 
-        ? `Solved in ${currentGuesses} guess${currentGuesses === 1 ? '' : 'es'} with ${hintTextStr}!`
-        : `Unsuccessful today. The answer was ${secretPlayer.name}. Used ${hintTextStr}.`;
-
-    modalText.textContent = resultSummary;
-    
-    modalExtra.innerHTML = `<button id="modal-share-btn" class="main-share-btn">📋 SHARE RESULT</button>`;
+    modalText.textContent = getResultSummaryString(won);
+    modalExtra.innerHTML = ""; // Share button intentionally removed from modal
     modal.style.display = "flex";
 
-    // Show share button at the bottom of the screen below guesses
-    shareBottomContainer.style.display = "block";
-
-    document.getElementById("modal-share-btn").onclick = () => triggerShareAction(resultSummary);
-    bottomShareBtn.onclick = () => triggerShareAction(resultSummary);
+    showBottomShareButton(won);
 }
 
 function revealCorrectPlayerRow() {
@@ -390,7 +404,7 @@ function lockInputSystem() {
 submitBtn.addEventListener("click", handleGuessSubmit);
 searchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleGuessSubmit(); });
 
-// Initialize to HOME screen on refresh
+// Initialize landing screen to HOME
 switchTab("home");
 
 const tabs = document.querySelectorAll('.tab-btn');
