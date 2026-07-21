@@ -11,7 +11,7 @@ const sportConfigs = {
         headers: ["Player", "Pos", "Yds", "TDs", "#", "Age"],
         categories: [
             { key: 'name', type: 'match' },
-            { key: 'position', type: 'match' },
+            { key: 'position', type: 'position' },
             { key: 'yards', type: 'number', thresh: 250 },
             { key: 'tds', type: 'number', thresh: 2 },
             { key: 'jersey', type: 'number', thresh: 2 },
@@ -20,11 +20,11 @@ const sportConfigs = {
         gridCss: "130px 52px 65px 60px 52px 52px"
     },
     basketball: {
-        instructions: "Welcome to Statle Basketball!\n\n📅 STAT NOTE:\nAll stats are from the 2025-2026 NBA season.\n\n📌 Stat Abbreviation:\n'Stx' = Stocks (Steals + Blocks)\n\n💡 Yellow indicators mean:\nPPG, APG, RPG, Stx: Within 2.0 | FG%: Within 5% | Jersey, Age: Within 2\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
+        instructions: "Welcome to Statle Basketball!\n\n📅 STAT NOTE:\nAll stats are from the 2025-2026 NBA season.\n\n📌 Stat Abbreviation:\n'Stx' = Stocks (Steals + Blocks)\n\n🏀 POSITION RULE:\nYellow position means the guessed position is adjacent to the target player's position:\n• PG ↔ SG ↔ SF ↔ PF ↔ C\n\n💡 Yellow indicators mean:\nPPG, APG, RPG, Stx: Within 2.0 | FG%: Within 5% | Jersey, Age: Within 2\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
         headers: ["Player", "Pos", "PPG", "APG", "RPG", "FG%", "Stx", "#", "Age"],
         categories: [
             { key: 'name', type: 'match' },
-            { key: 'position', type: 'match' },
+            { key: 'position', type: 'position' },
             { key: 'ppg', type: 'number', thresh: 2 },
             { key: 'apg', type: 'number', thresh: 2 },
             { key: 'rpg', type: 'number', thresh: 2 },
@@ -34,6 +34,22 @@ const sportConfigs = {
             { key: 'age', type: 'number', thresh: 2 }
         ],
         gridCss: "130px 48px 52px 52px 52px 52px 52px 48px 48px"
+    },
+    baseball: {
+        instructions: "Welcome to Statle Baseball!\n\n📅 STAT NOTE:\nAll stats are from the 2025 MLB season.\n\n⚾ POSITION RULE:\nYellow position means you guessed an Infield position when the secret player is Infield (or Outfield for Outfield).\n• Infield: C, 1B, 2B, 3B, SS, DH\n• Outfield: LF, CF, RF, OF\n*(Pitchers are excluded)\n\n💡 Yellow indicators mean:\n• BA: Within .015 | HR, RBI, SB: Within 5\n• Hits: Within 15 | Jersey, Age: Within 2\n\n🔑 HINT SYSTEM:\n• League (AL/NL): Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
+        headers: ["Player", "Pos", "BA", "HR", "RBI", "Hits", "SB", "#", "Age"],
+        categories: [
+            { key: 'name', type: 'match' },
+            { key: 'position', type: 'position' },
+            { key: 'ba', type: 'number', thresh: 0.015 },
+            { key: 'hr', type: 'number', thresh: 5 },
+            { key: 'rbi', type: 'number', thresh: 5 },
+            { key: 'hits', type: 'number', thresh: 15 },
+            { key: 'sb', type: 'number', thresh: 5 },
+            { key: 'jersey', type: 'number', thresh: 2 },
+            { key: 'age', type: 'number', thresh: 2 }
+        ],
+        gridCss: "130px 48px 52px 48px 48px 52px 48px 48px 48px"
     }
 };
 
@@ -71,8 +87,11 @@ function showInstructions() {
     let hintsHtml = `<div style="margin-top:15px; padding:10px; background:#272729; border-radius:6px; text-align:left;">`;
     hintsHtml += `<strong style="color:#ffd700;">Unlocked Hints:</strong><br>`;
     
-    if (unlockedHintTier >= 1) hintsHtml += `• Conference: <strong>${secretPlayer.conf || secretPlayer.conference || "N/A"}</strong><br>`;
-    else hintsHtml += `• Conference: <em style="color:#777;">(Unlocks after 2 guesses)</em><br>`;
+    const leagueOrConfLabel = currentSport === "baseball" ? "League" : "Conference";
+    const leagueOrConfVal = secretPlayer.league || secretPlayer.conf || secretPlayer.conference || "N/A";
+
+    if (unlockedHintTier >= 1) hintsHtml += `• ${leagueOrConfLabel}: <strong>${leagueOrConfVal}</strong><br>`;
+    else hintsHtml += `• ${leagueOrConfLabel}: <em style="color:#777;">(Unlocks after 2 guesses)</em><br>`;
 
     if (unlockedHintTier >= 2) hintsHtml += `• Division: <strong>${secretPlayer.div || secretPlayer.division || "N/A"}</strong><br>`;
     else hintsHtml += `• Division: <em style="color:#777;">(Unlocks after 4 guesses)</em><br>`;
@@ -147,7 +166,10 @@ function handleHintClick(requestedLevel) {
     if (currentGuesses < unlockThreshold) return;
 
     let hintText = "";
-    if (requestedLevel === 1) hintText = `Conference: ${secretPlayer.conf || secretPlayer.conference || "N/A"}`;
+    const leagueOrConfLabel = currentSport === "baseball" ? "League" : "Conference";
+    const leagueOrConfVal = secretPlayer.league || secretPlayer.conf || secretPlayer.conference || "N/A";
+
+    if (requestedLevel === 1) hintText = `${leagueOrConfLabel}: ${leagueOrConfVal}`;
     if (requestedLevel === 2) hintText = `Division: ${secretPlayer.div || secretPlayer.division || "N/A"}`;
     if (requestedLevel === 3) hintText = `Team: ${secretPlayer.team || "N/A"}`;
 
@@ -202,7 +224,6 @@ function setDailyPlayer() {
             if (currentGuesses >= maxGuesses && !gameHistory.won) {
                 revealCorrectPlayerRow();
             }
-            // Show bottom share button for previously finished game, but DO NOT trigger popup
             showBottomShareButton(gameHistory.won);
         }
     }
@@ -224,6 +245,43 @@ function saveGameStateToStorage(wonGame = false) {
         hintsUsed: hintsUsedCount
     };
     localStorage.setItem(`statle_${currentSport}_${dayKey}`, JSON.stringify(stateToSave));
+}
+
+// Custom Basketball Position Check (Adjacent Positions = Yellow)
+function checkBasketballPosition(guessedPos, secretPos) {
+    if (guessedPos === secretPos) return "correct";
+
+    const adjacencyMap = {
+        'PG': ['SG'],
+        'SG': ['PG', 'SF'],
+        'SF': ['SG', 'PF'],
+        'PF': ['SF', 'C'],
+        'C':  ['PF']
+    };
+
+    if (adjacencyMap[guessedPos] && adjacencyMap[guessedPos].includes(secretPos)) {
+        return "partial";
+    }
+    return "wrong";
+}
+
+// Custom Baseball Position Check (Infield vs Outfield = Yellow)
+function checkBaseballPosition(guessedPos, secretPos) {
+    if (guessedPos === secretPos) return "correct";
+
+    const infield = ['C', '1B', '2B', '3B', 'SS', 'DH'];
+    const outfield = ['LF', 'CF', 'RF', 'OF'];
+
+    const guessedInfield = infield.includes(guessedPos);
+    const secretInfield = infield.includes(secretPos);
+
+    const guessedOutfield = outfield.includes(guessedPos);
+    const secretOutfield = outfield.includes(secretPos);
+
+    if ((guessedInfield && secretInfield) || (guessedOutfield && secretOutfield)) {
+        return "partial";
+    }
+    return "wrong";
 }
 
 searchInput.addEventListener("input", function() {
@@ -293,7 +351,17 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
             else if (guessVal.length > 13) cell.classList.add('name-long');
         }
 
-        if (category.type === 'match') {
+        if (category.key === 'position') {
+            cell.textContent = guessVal;
+            if (currentSport === 'basketball') {
+                cell.classList.add(checkBasketballPosition(guessVal, secretVal));
+            } else if (currentSport === 'baseball') {
+                cell.classList.add(checkBaseballPosition(guessVal, secretVal));
+            } else {
+                cell.classList.add(guessVal === secretVal ? "correct" : "wrong");
+            }
+        }
+        else if (category.type === 'match') {
             cell.textContent = guessVal;
             cell.classList.add(guessVal === secretVal ? "correct" : "wrong");
         } 
@@ -320,7 +388,6 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
     const won = guessedPlayer.name === secretPlayer.name;
     if (triggerAlerts) saveGameStateToStorage(won);
 
-    // Only fire popup alert and bottom share setup if this is a active guess submit
     if (triggerAlerts) {
         setTimeout(() => {
             if (won) {
@@ -335,7 +402,7 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
     }
 }
 
-// Uses native system share dialog (Messages, WhatsApp, etc.) with clipboard fallback
+// Triggers system share sheet (Messages, WhatsApp, AirDrop, etc.) with fallback
 async function triggerShareAction(resultSummary) {
     const shareText = `Statle (${currentSport.toUpperCase()}): ${resultSummary}\nhttps://statle.vercel.app`;
     
@@ -346,7 +413,7 @@ async function triggerShareAction(resultSummary) {
                 text: shareText
             });
         } catch (err) {
-            // User canceled share or feature failed
+            // User cancelled share
         }
     } else {
         navigator.clipboard.writeText(shareText);
@@ -370,7 +437,7 @@ function showBottomShareButton(won) {
 function showEndGameModal(won) {
     modalTitle.textContent = won ? "VICTORY!" : "GAME OVER";
     modalText.textContent = getResultSummaryString(won);
-    modalExtra.innerHTML = ""; // Share button intentionally removed from modal
+    modalExtra.innerHTML = ""; 
     modal.style.display = "flex";
 
     showBottomShareButton(won);
@@ -404,7 +471,7 @@ function lockInputSystem() {
 submitBtn.addEventListener("click", handleGuessSubmit);
 searchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleGuessSubmit(); });
 
-// Initialize landing screen to HOME
+// Set default landing tab to HOME
 switchTab("home");
 
 const tabs = document.querySelectorAll('.tab-btn');
