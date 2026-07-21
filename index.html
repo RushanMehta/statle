@@ -6,43 +6,91 @@
     <title>Statle</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="football-theme">
+<body class="home-theme">
 
     <header>
         <h1 class="main-title">STATLE</h1>
         <nav class="sports-tabs">
-            <button class="tab-btn active" data-sport="football">NFL</button>
+            <button class="tab-btn active" data-sport="home">HOME</button>
+            <button class="tab-btn" data-sport="football">NFL</button>
             <button class="tab-btn" data-sport="basketball">NBA</button>
             <button class="tab-btn" data-sport="baseball">MLB</button>
             <button class="tab-btn" data-sport="hockey">NHL</button>
             <button class="tab-btn" data-sport="soccer">SOCCER</button>
         </nav>
-        <div class="action-bar">
+        <div class="action-bar" id="game-action-bar" style="display: none;">
             <button id="rules-toggle-btn">HELP / RULES</button>
             <span id="guess-counter">Guesses: 0 / 8</span>
         </div>
     </header>
 
     <main id="game-container">
-        <div id="hint-bar">
-            <button id="hint-conf-btn" class="hint-btn">Conf (Guess 2)</button>
-            <button id="hint-div-btn" class="hint-btn">Div (Guess 4)</button>
-            <button id="hint-team-btn" class="hint-btn">Team (Guess 6)</button>
-        </div>
-        <div id="active-hint-display"></div>
 
-        <div id="input-container">
-            <div class="search-box">
-                <input type="text" id="player-search" placeholder="Type a football player's name..." autocomplete="off">
-                <div id="autocomplete-list" class="autocomplete-items"></div>
+        <section id="home-view">
+            <div class="welcome-card">
+                <h2>WELCOME TO STATLE!</h2>
+                <p>Test your sports knowledge across 5 daily stat guessing games. Every day features a new target player for each sport!</p>
             </div>
-            <button id="submit-guess">GUESS</button>
+
+            <div class="game-modes-grid">
+                <div class="mode-card" onclick="switchTab('football')">
+                    <h3>🏈 NFL Football</h3>
+                    <p>Guess the mystery NFL player based on Position, Yards, Touchdowns, Jersey Number, and Age.</p>
+                    <button class="play-btn">Play NFL</button>
+                </div>
+
+                <div class="mode-card" onclick="switchTab('basketball')">
+                    <h3>🏀 NBA Basketball</h3>
+                    <p>Guess the NBA player using PPG, APG, RPG, FG%, Stocks (Steals + Blocks), Jersey Number, and Age.</p>
+                    <button class="play-btn">Play NBA</button>
+                </div>
+
+                <div class="mode-card" onclick="switchTab('baseball')">
+                    <h3>⚾ MLB Baseball</h3>
+                    <p>Coming Soon! Daily Baseball player guessing game.</p>
+                    <button class="play-btn" disabled>Coming Soon</button>
+                </div>
+
+                <div class="mode-card" onclick="switchTab('hockey')">
+                    <h3>🏒 NHL Hockey</h3>
+                    <p>Coming Soon! Daily Hockey player guessing game.</p>
+                    <button class="play-btn" disabled>Coming Soon</button>
+                </div>
+
+                <div class="mode-card" onclick="switchTab('soccer')">
+                    <h3>⚽ Soccer</h3>
+                    <p>Coming Soon! Daily Soccer player guessing game.</p>
+                    <button class="play-btn" disabled>Coming Soon</button>
+                </div>
+            </div>
+        </section>
+
+        <div id="game-play-area" style="display: none;">
+            <div id="hint-bar">
+                <button id="hint-conf-btn" class="hint-btn">Conf (Guess 2)</button>
+                <button id="hint-div-btn" class="hint-btn">Div (Guess 4)</button>
+                <button id="hint-team-btn" class="hint-btn">Team (Guess 6)</button>
+            </div>
+            <div id="active-hint-display"></div>
+
+            <div id="input-container">
+                <div class="search-box">
+                    <input type="text" id="player-search" placeholder="Type a player's name..." autocomplete="off">
+                    <div id="autocomplete-list" class="autocomplete-items"></div>
+                </div>
+                <button id="submit-guess">GUESS</button>
+            </div>
+
+            <section id="results-container">
+                <div id="dynamic-header" class="results-header"></div>
+                <div id="guesses-rows"></div>
+            </section>
+
+            <div id="share-bottom-container" style="display: none; text-align: center; margin-top: 20px;">
+                <button id="bottom-share-btn" class="main-share-btn">📋 SHARE RESULT</button>
+            </div>
         </div>
 
-        <section id="results-container">
-            <div id="dynamic-header" class="results-header"></div>
-            <div id="guesses-rows"></div>
-        </section>
     </main>
 
     <div id="instructions-modal" class="modal">
