@@ -2,11 +2,12 @@ let currentSport = "football";
 let secretPlayer = null;
 let currentGuesses = 0;
 const maxGuesses = 8;
+let hintsUsedCount = 0;
+let unlockedHintTier = 0;
 
-// Define sport configurations dynamically
 const sportConfigs = {
     football: {
-        instructions: "Welcome to Statle Football! Guess the mystery NFL skill player from the 2025-2026 season.\n\n💡 Yellow means:\nYards: Within 250 | TDs, Jersey, Age: Within 2",
+        instructions: "Welcome to Statle Football!\n\n💡 Yellow indicators mean:\nYards: Within 250 | TDs, Jersey, Age: Within 2\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
         headers: ["Player", "Pos", "Yds", "TDs", "#", "Age"],
         categories: [
             { key: 'name', type: 'match' },
@@ -15,10 +16,11 @@ const sportConfigs = {
             { key: 'tds', type: 'number', thresh: 2 },
             { key: 'jersey', type: 'number', thresh: 2 },
             { key: 'age', type: 'number', thresh: 2 }
-        ]
+        ],
+        gridCss: "1.8fr 0.8fr 1fr 1fr 0.8fr 0.8fr"
     },
     basketball: {
-        instructions: "Welcome to Statle Basketball! Guess the mystery NBA player from the 2025-2026 season.\n\n💡 Yellow means:\nPPG, APG, RPG, Stocks: Within 2.0 | FG%: Within 5% | Jersey, Age: Within 2",
+        instructions: "Welcome to Statle Basketball!\n\n💡 Yellow indicators mean:\nPPG, APG, RPG, Stocks: Within 2.0 | FG%: Within 5% | Jersey, Age: Within 2\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
         headers: ["Player", "Pos", "PPG", "APG", "RPG", "FG%", "Stx", "#", "Age"],
         categories: [
             { key: 'name', type: 'match' },
@@ -26,11 +28,12 @@ const sportConfigs = {
             { key: 'ppg', type: 'number', thresh: 2 },
             { key: 'apg', type: 'number', thresh: 2 },
             { key: 'rpg', type: 'number', thresh: 2 },
-            { key: 'fg', type: 'number', thresh: 5 }, // Thresh set to 5%
+            { key: 'fg', type: 'number', thresh: 5 },
             { key: 'stocks', type: 'number', thresh: 2 },
             { key: 'jersey', type: 'number', thresh: 2 },
             { key: 'age', type: 'number', thresh: 2 }
-        ]
+        ],
+        gridCss: "1.8fr 0.6fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.6fr 0.6fr"
     }
 };
 
@@ -45,13 +48,37 @@ const dynamicHeader = document.getElementById("dynamic-header");
 const modal = document.getElementById("instructions-modal");
 const modalTitle = document.getElementById("modal-title");
 const modalText = document.getElementById("modal-text");
+const modalExtra = document.getElementById("modal-extra-content");
 const closeModalBtn = document.getElementById("close-modal-btn");
 
+const hintConfBtn = document.getElementById("hint-conf-btn");
+const hintDivBtn = document.getElementById("hint-div-btn");
+const hintTeamBtn = document.getElementById("hint-team-btn");
+const activeHintDisplay = document.getElementById("active-hint-display");
+
 function showInstructions() {
-    modalTitle.textContent = currentSport.toUpperCase() + " RULES";
+    modalTitle.textContent = currentSport.toUpperCase() + " RULES & HINTS";
     modalText.innerText = sportConfigs[currentSport].instructions;
+
+    // Display currently unlocked hints directly inside the Help section
+    let hintsHtml = `<div style="margin-top:15px; padding:10px; background:#272729; border-radius:6px; text-align:left;">`;
+    hintsHtml += `<strong style="color:#ffd700;">Unlocked Hints:</strong><br>`;
+    
+    if (unlockedHintTier >= 1) hintsHtml += `• Conference: <strong>${secretPlayer.conf || secretPlayer.conference || "N/A"}</strong><br>`;
+    else hintsHtml += `• Conference: <em style="color:#777;">(Unlocks after 2 guesses)</em><br>`;
+
+    if (unlockedHintTier >= 2) hintsHtml += `• Division: <strong>${secretPlayer.div || secretPlayer.division || "N/A"}</strong><br>`;
+    else hintsHtml += `• Division: <em style="color:#777;">(Unlocks after 4 guesses)</em><br>`;
+
+    if (unlockedHintTier >= 3) hintsHtml += `• Team: <strong>${secretPlayer.team || "N/A"}</strong><br>`;
+    else hintsHtml += `• Team: <em style="color:#777;">(Unlocks after 6 guesses)</em><br>`;
+
+    hintsHtml += `</div>`;
+    
+    modalExtra.innerHTML = hintsHtml;
     modal.style.display = "flex";
 }
+
 closeModalBtn.onclick = () => modal.style.display = "none";
 helpBtn.onclick = () => showInstructions();
 
@@ -59,24 +86,51 @@ function updateThemeAndState() {
     document.body.className = `${currentSport}-theme`;
     counterDisplay.textContent = `Guesses: ${currentGuesses} / ${maxGuesses}`;
     
-    // Generate dynamic grid columns based on the selected sport config
     dynamicHeader.innerHTML = "";
     const config = sportConfigs[currentSport];
-    
-    // Adjust grid CSS automatically for Basketball's 7 columns vs Football's 6 columns
-    // Replace the columnsCss lines with this:
-const columnsCss = config.categories.length === 9 
-    ? "1.6fr 0.6fr 0.7fr 0.7fr 0.7fr 0.8fr 0.7fr 0.6fr 0.6fr" 
-    : (config.categories.length === 7 ? "1.8fr 0.8fr 0.9fr 0.9fr 0.9fr 0.8fr 0.9fr" : "1.8fr 0.9fr 1.1fr 1.1fr 0.9fr 1fr");
-    dynamicHeader.style.gridTemplateColumns = columnsCss;
-    guessesRows.style.setProperty('--grid-cols', columnsCss);
+    dynamicHeader.style.gridTemplateColumns = config.gridCss;
 
     config.headers.forEach(headerText => {
         const span = document.createElement("span");
         span.textContent = headerText;
         dynamicHeader.appendChild(span);
     });
+
+    updateHintButtons();
 }
+
+function updateHintButtons() {
+    if (currentGuesses >= 2) hintConfBtn.classList.add("unlocked");
+    else hintConfBtn.classList.remove("unlocked");
+
+    if (currentGuesses >= 4) hintDivBtn.classList.add("unlocked");
+    else hintDivBtn.classList.remove("unlocked");
+
+    if (currentGuesses >= 6) hintTeamBtn.classList.add("unlocked");
+    else hintTeamBtn.classList.remove("unlocked");
+}
+
+function handleHintClick(requestedLevel) {
+    let unlockThreshold = requestedLevel * 2;
+    if (currentGuesses < unlockThreshold) return;
+
+    let hintText = "";
+    if (requestedLevel === 1) hintText = `Conference: ${secretPlayer.conf || secretPlayer.conference || "N/A"}`;
+    if (requestedLevel === 2) hintText = `Division: ${secretPlayer.div || secretPlayer.division || "N/A"}`;
+    if (requestedLevel === 3) hintText = `Team: ${secretPlayer.team || "N/A"}`;
+
+    activeHintDisplay.textContent = `💡 HINT #${requestedLevel}: ${hintText}`;
+    activeHintDisplay.style.display = "block";
+
+    if (requestedLevel > unlockedHintTier) {
+        hintsUsedCount++;
+        unlockedHintTier = requestedLevel;
+    }
+}
+
+hintConfBtn.onclick = () => handleHintClick(1);
+hintDivBtn.onclick = () => handleHintClick(2);
+hintTeamBtn.onclick = () => handleHintClick(3);
 
 function setDailyPlayer() {
     const today = new Date();
@@ -85,6 +139,9 @@ function setDailyPlayer() {
     
     guessesRows.innerHTML = "";
     currentGuesses = 0;
+    hintsUsedCount = 0;
+    unlockedHintTier = 0;
+    activeHintDisplay.style.display = "none";
     searchInput.disabled = false;
     submitBtn.disabled = false;
 
@@ -103,6 +160,7 @@ function setDailyPlayer() {
     const savedState = localStorage.getItem(`statle_${currentSport}_${dayKey}`);
     if (savedState) {
         const gameHistory = JSON.parse(savedState);
+        hintsUsedCount = gameHistory.hintsUsed || 0;
         gameHistory.guesses.forEach(guessName => {
             renderGuessRow(guessName, false); 
         });
@@ -111,6 +169,7 @@ function setDailyPlayer() {
             if (currentGuesses >= maxGuesses && !gameHistory.won) {
                 revealCorrectPlayerRow();
             }
+            showEndGameModal(gameHistory.won);
         }
     } else {
         showInstructions();
@@ -129,7 +188,8 @@ function saveGameStateToStorage(wonGame = false) {
     const stateToSave = {
         guesses: currentRows,
         gameOver: wonGame || isLoss,
-        won: wonGame
+        won: wonGame,
+        hintsUsed: hintsUsedCount
     };
     localStorage.setItem(`statle_${currentSport}_${dayKey}`, JSON.stringify(stateToSave));
 }
@@ -175,6 +235,8 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
 
     currentGuesses++;
     counterDisplay.textContent = `Guesses: ${currentGuesses} / ${maxGuesses}`;
+    updateHintButtons();
+
     if (triggerAlerts) {
         autocompleteList.innerHTML = "";
         searchInput.value = "";
@@ -182,7 +244,7 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
 
     const row = document.createElement("div");
     row.className = "row";
-    row.style.gridTemplateColumns = sportConfigs[currentSport].categories.length === 7 ? "1.8fr 0.8fr 0.9fr 0.9fr 0.9fr 0.8fr 0.9fr" : "1.8fr 0.9fr 1.1fr 1.1fr 0.9fr 1fr";
+    row.style.gridTemplateColumns = sportConfigs[currentSport].gridCss;
 
     const config = sportConfigs[currentSport];
 
@@ -192,6 +254,12 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
         
         let guessVal = guessedPlayer[category.key];
         let secretVal = secretPlayer[category.key];
+
+        if (category.key === 'name') {
+            cell.classList.add('name-cell');
+            if (guessVal.length > 18) cell.classList.add('name-extra-long');
+            else if (guessVal.length > 13) cell.classList.add('name-long');
+        }
 
         if (category.type === 'match') {
             cell.textContent = guessVal;
@@ -205,7 +273,6 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
                 const arrow = guessVal < secretVal ? " ↑" : " ↓";
                 cell.textContent = guessVal + arrow;
 
-                // Generalized Proximity Check using Thresh config values
                 if (Math.abs(guessVal - secretVal) <= category.thresh) {
                     cell.classList.add("partial");
                 } else {
@@ -224,26 +291,50 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
     if (triggerAlerts) {
         setTimeout(() => {
             if (won) {
-                alert("🎉 Spectacular! You matched the target player!");
                 lockInputSystem();
+                showEndGameModal(true);
             } else if (currentGuesses >= maxGuesses) {
                 revealCorrectPlayerRow();
-                alert(`Out of options! The secret target was: ${secretPlayer.name}`);
                 lockInputSystem();
+                showEndGameModal(false);
             }
         }, 150);
     }
 }
 
+function showEndGameModal(won) {
+    modalTitle.textContent = won ? "VICTORY!" : "GAME OVER";
+    const hintTextStr = `${hintsUsedCount} hint${hintsUsedCount === 1 ? '' : 's'}`;
+    const resultSummary = won 
+        ? `Solved in ${currentGuesses} guess${currentGuesses === 1 ? '' : 'es'} with ${hintTextStr}!`
+        : `Unsuccessful today. The answer was ${secretPlayer.name}. Used ${hintTextStr}.`;
+
+    modalText.textContent = resultSummary;
+    
+    modalExtra.innerHTML = `<button id="share-btn">📋 SHARE RESULT</button>`;
+    modal.style.display = "flex";
+
+    document.getElementById("share-btn").onclick = () => {
+        const shareText = `Statle (${currentSport.toUpperCase()}): ${resultSummary}\nhttps://statle.vercel.app`;
+        navigator.clipboard.writeText(shareText);
+        alert("Result copied to clipboard!");
+    };
+}
+
 function revealCorrectPlayerRow() {
     const row = document.createElement("div");
     row.className = "row reveal-fail-row";
-    row.style.gridTemplateColumns = sportConfigs[currentSport].categories.length === 7 ? "1.8fr 0.8fr 0.9fr 0.9fr 0.9fr 0.8fr 0.9fr" : "1.8fr 0.9fr 1.1fr 1.1fr 0.9fr 1fr";
+    row.style.gridTemplateColumns = sportConfigs[currentSport].gridCss;
 
     const config = sportConfigs[currentSport];
     config.categories.forEach(category => {
         const cell = document.createElement("div");
         cell.className = "cell revealed-fail";
+        if (category.key === 'name') {
+            cell.classList.add('name-cell');
+            if (secretPlayer.name.length > 18) cell.classList.add('name-extra-long');
+            else if (secretPlayer.name.length > 13) cell.classList.add('name-long');
+        }
         cell.textContent = secretPlayer[category.key] !== undefined ? secretPlayer[category.key] : "N/A";
         row.appendChild(cell);
     });
