@@ -151,8 +151,204 @@ const playersDatabase = {
   { name: "Mark Andrews", position: "TE", team: "BAL", yards: 470, tds: 6, jersey: 89, age: 30 },
     ],
     basketball: [
-    { name: "Victor Wembanyama", position: "C", ppg: 23.5, apg: 3.8, rpg: 11.2, fg: 47, stocks: 4.8, jersey: 1, age: 22 },
-    { name: "Shai Gilgeous-Alexander", position: "PG", ppg: 30.1, apg: 6.4, rpg: 5.6, fg: 54, stocks: 2.9, jersey: 2, age: 28 },
+    // 2025-26 NBA regular-season stats (from Basketball-Reference per-game leaders)
+// stocks = steals + blocks combined, per game
+// fg = field goal % as a whole number
+// jersey: null — not available from this data source
+// For players traded mid-season, team = whichever team they played the most games for.
+// Bench depth below is limited to players who register at or above ~13.5 PPG in the
+// source table — deeper rotation/bench players under that threshold aren't included.
+// A few teams (BRK, DET, LAL) are thin here for that reason — let me know if you want
+// me to dig up their full rosters specifically.
+  // ============================= ATLANTA HAWKS =============================
+  { name: "Trae Young", position: "PG", team: "ATL", ppg: 19.3, apg: 8.9, rpg: 1.5, fg: 42, stocks: 1.1, jersey: 3, age: 27 },
+  { name: "Nickeil Alexander-Walker", position: "SG", team: "ATL", ppg: 20.8, apg: 3.7, rpg: 3.4, fg: 46, stocks: 1.8, jersey: 7, age: 27 },
+  { name: "Jalen Johnson", position: "SF", team: "ATL", ppg: 22.5, apg: 7.9, rpg: 10.3, fg: 49, stocks: 1.6, jersey: 1, age: 24 },
+  { name: "Kristaps Porziņģis", position: "PF", team: "ATL", ppg: 17.1, apg: 2.7, rpg: 5.1, fg: 46, stocks: 1.8, jersey: 8, age: 30 },
+  { name: "Onyeka Okongwu", position: "C", team: "ATL", ppg: 15.2, apg: 3.1, rpg: 7.6, fg: 48, stocks: 2.2, jersey: 17, age: 25 },
+  { name: "CJ McCollum", position: "PG", team: "ATL", ppg: 18.7, apg: 4.1, rpg: 3.1, fg: 46, stocks: 1.6, jersey: 3, age: 34 }, // bench
+
+  // ============================= BOSTON CELTICS =============================
+  { name: "Payton Pritchard", position: "PG", team: "BOS", ppg: 17.0, apg: 5.2, rpg: 3.9, fg: 46, stocks: 0.8, jersey: 11, age: 28 },
+  { name: "Derrick White", position: "SG", team: "BOS", ppg: 16.5, apg: 5.4, rpg: 4.4, fg: 39, stocks: 2.4, jersey: 9, age: 31 },
+  { name: "Jaylen Brown", position: "SF", team: "BOS", ppg: 28.7, apg: 5.1, rpg: 6.9, fg: 48, stocks: 1.4, jersey: 7, age: 29 },
+  { name: "Jayson Tatum", position: "PF", team: "BOS", ppg: 21.8, apg: 5.3, rpg: 10.0, fg: 41, stocks: 1.6, jersey: 0, age: 27 },
+  { name: "Anfernee Simons", position: "SG", team: "BOS", ppg: 14.2, apg: 2.4, rpg: 2.4, fg: 44, stocks: 0.7, jersey: 1, age: 26 }, // bench
+
+  // ============================= BROOKLYN NETS =============================
+  { name: "Michael Porter Jr.", position: "SF", team: "BRK", ppg: 24.2, apg: 3.0, rpg: 7.1, fg: 46, stocks: 1.4, jersey: 1, age: 27 },
+  { name: "Cam Thomas", position: "SG", team: "BRK", ppg: 13.5, apg: 2.6, rpg: 1.7, fg: 41, stocks: 0.3, jersey: 24, age: 24 },
+
+  // ============================= CHARLOTTE HORNETS =============================
+  { name: "LaMelo Ball", position: "PG", team: "CHO", ppg: 20.1, apg: 7.1, rpg: 4.8, fg: 41, stocks: 1.4, jersey: 1, age: 24 },
+  { name: "Collin Sexton", position: "SG", team: "CHO", ppg: 14.2, apg: 3.7, rpg: 1.9, fg: 49, stocks: 1.1, jersey: 2, age: 27 },
+  { name: "Kon Knueppel", position: "SF", team: "CHO", ppg: 18.5, apg: 3.4, rpg: 5.3, fg: 48, stocks: 0.9, jersey: 7, age: 20 }, // ROY runner-up
+  { name: "Brandon Miller", position: "SF", team: "CHO", ppg: 20.2, apg: 3.3, rpg: 4.9, fg: 44, stocks: 1.7, jersey: 24, age: 23 },
+  { name: "Miles Bridges", position: "PF", team: "CHO", ppg: 17.1, apg: 3.2, rpg: 5.8, fg: 46, stocks: 1.0, jersey: 0, age: 27 },
+
+  // ============================= CHICAGO BULLS =============================
+  { name: "Josh Giddey", position: "PG", team: "CHI", ppg: 17.0, apg: 9.1, rpg: 8.3, fg: 45, stocks: 1.5, jersey: 3, age: 23 },
+  { name: "Coby White", position: "SG", team: "CHI", ppg: 18.6, apg: 4.7, rpg: 3.7, fg: 44, stocks: 0.8, jersey: 0, age: 25 },
+  { name: "Ayo Dosunmu", position: "SG", team: "CHI", ppg: 15.0, apg: 3.6, rpg: 3.0, fg: 51, stocks: 1.1, jersey: 11, age: 26 }, // bench
+  { name: "Matas Buzelis", position: "PF", team: "CHI", ppg: 16.3, apg: 2.1, rpg: 5.8, fg: 46, stocks: 2.2, jersey: 14, age: 21 },
+  { name: "Nikola Vučević", position: "C", team: "CHI", ppg: 16.9, apg: 3.8, rpg: 9.0, fg: 51, stocks: 1.3, jersey: 9, age: 35 },
+  { name: "Tre Jones", position: "PG", team: "CHI", ppg: 14.1, apg: 5.4, rpg: 3.1, fg: 55, stocks: 1.4, jersey: 30, age: 26 }, // bench
+
+  // ============================= CLEVELAND CAVALIERS =============================
+  { name: "Darius Garland", position: "PG", team: "CLE", ppg: 18.0, apg: 6.9, rpg: 2.4, fg: 45, stocks: 0.9, jersey: 10, age: 26 },
+  { name: "Donovan Mitchell", position: "SG", team: "CLE", ppg: 27.9, apg: 5.7, rpg: 4.5, fg: 48, stocks: 1.8, jersey: 45, age: 29 },
+  { name: "De'Andre Hunter", position: "SF", team: "CLE", ppg: 14.0, apg: 2.1, rpg: 4.2, fg: 42, stocks: 0.8, jersey: 12, age: 28 },
+  { name: "Evan Mobley", position: "PF", team: "CLE", ppg: 18.2, apg: 3.6, rpg: 9.0, fg: 55, stocks: 2.4, jersey: 4, age: 24 },
+  { name: "Jarrett Allen", position: "C", team: "CLE", ppg: 15.4, apg: 1.8, rpg: 8.5, fg: 64, stocks: 1.8, jersey: 31, age: 27 },
+
+  // ============================= DALLAS MAVERICKS =============================
+  { name: "Cooper Flagg", position: "SF", team: "DAL", ppg: 21.0, apg: 4.5, rpg: 6.7, fg: 47, stocks: 2.1, jersey: 32, age: 19 }, // ROY
+  { name: "Naji Marshall", position: "SF", team: "DAL", ppg: 15.2, apg: 3.3, rpg: 4.7, fg: 51, stocks: 1.2, jersey: 13, age: 28 }, // bench
+  { name: "Anthony Davis", position: "PF", team: "DAL", ppg: 20.4, apg: 2.8, rpg: 11.1, fg: 51, stocks: 2.8, jersey: 3, age: 32 },
+  { name: "P.J. Washington", position: "PF", team: "DAL", ppg: 14.2, apg: 1.8, rpg: 7.0, fg: 45, stocks: 2.1, jersey: 25, age: 27 }, // bench
+
+  // ============================= DENVER NUGGETS =============================
+  { name: "Jamal Murray", position: "PG", team: "DEN", ppg: 25.4, apg: 7.1, rpg: 4.4, fg: 48, stocks: 1.3, jersey: 27, age: 28 },
+  { name: "Nikola Jokić", position: "C", team: "DEN", ppg: 27.7, apg: 10.7, rpg: 12.9, fg: 57, stocks: 2.2, jersey: 15, age: 30 },
+  { name: "Aaron Gordon", position: "PF", team: "DEN", ppg: 16.2, apg: 2.7, rpg: 5.8, fg: 50, stocks: 0.9, jersey: 50, age: 30 },
+  { name: "Peyton Watson", position: "SF", team: "DEN", ppg: 14.6, apg: 2.1, rpg: 4.9, fg: 49, stocks: 2.0, jersey: 8, age: 23 }, // bench
+
+  // ============================= DETROIT PISTONS =============================
+  { name: "Cade Cunningham", position: "PG", team: "DET", ppg: 23.9, apg: 9.9, rpg: 5.5, fg: 46, stocks: 2.2, jersey: 2, age: 24 },
+  { name: "Jalen Duren", position: "C", team: "DET", ppg: 19.5, apg: 2.0, rpg: 10.5, fg: 65, stocks: 1.6, jersey: 0, age: 22 },
+
+  // ============================= GOLDEN STATE WARRIORS =============================
+  { name: "Stephen Curry", position: "PG", team: "GSW", ppg: 26.6, apg: 4.7, rpg: 3.6, fg: 47, stocks: 1.5, jersey: 30, age: 37 },
+  { name: "Brandin Podziemski", position: "SG", team: "GSW", ppg: 13.8, apg: 3.7, rpg: 5.1, fg: 46, stocks: 1.3, jersey: 2, age: 22 },
+  { name: "Jimmy Butler", position: "SF", team: "GSW", ppg: 20.0, apg: 4.9, rpg: 5.6, fg: 52, stocks: 1.6, jersey: 10, age: 36 },
+
+  // ============================= HOUSTON ROCKETS =============================
+  { name: "Amen Thompson", position: "PG", team: "HOU", ppg: 18.3, apg: 5.3, rpg: 7.8, fg: 53, stocks: 2.1, jersey: 1, age: 23 },
+  { name: "Kevin Durant", position: "SF", team: "HOU", ppg: 26.0, apg: 4.8, rpg: 5.5, fg: 52, stocks: 1.7, jersey: 7, age: 37 },
+  { name: "Jabari Smith Jr.", position: "PF", team: "HOU", ppg: 15.8, apg: 1.9, rpg: 6.9, fg: 45, stocks: 1.6, jersey: 10, age: 22 }, // bench
+  { name: "Alperen Şengün", position: "C", team: "HOU", ppg: 20.4, apg: 6.2, rpg: 8.9, fg: 52, stocks: 2.3, jersey: 28, age: 23 },
+
+  // ============================= INDIANA PACERS =============================
+  { name: "Andrew Nembhard", position: "PG", team: "IND", ppg: 16.9, apg: 7.7, rpg: 2.8, fg: 44, stocks: 1.0, jersey: 2, age: 26 },
+  { name: "Bennedict Mathurin", position: "SF", team: "IND", ppg: 17.8, apg: 2.3, rpg: 5.4, fg: 43, stocks: 0.7, jersey: 00, age: 23 },
+  { name: "Aaron Nesmith", position: "SF", team: "IND", ppg: 13.8, apg: 1.9, rpg: 4.2, fg: 41, stocks: 1.1, jersey: 23, age: 26 }, // bench
+  { name: "Pascal Siakam", position: "PF", team: "IND", ppg: 24.0, apg: 3.8, rpg: 6.6, fg: 48, stocks: 1.5, jersey: 43, age: 31 },
+
+  // ============================= LA CLIPPERS =============================
+  { name: "James Harden", position: "PG", team: "LAC", ppg: 25.4, apg: 8.1, rpg: 4.8, fg: 42, stocks: 1.7, jersey: 1, age: 36 },
+  { name: "Kawhi Leonard", position: "SF", team: "LAC", ppg: 27.9, apg: 3.6, rpg: 6.4, fg: 51, stocks: 2.3, jersey: 2, age: 34 },
+  { name: "John Collins", position: "PF", team: "LAC", ppg: 13.6, apg: 1.0, rpg: 5.3, fg: 55, stocks: 1.6, jersey: 20, age: 28 }, // bench
+  { name: "Ivica Zubac", position: "C", team: "LAC", ppg: 14.4, apg: 2.2, rpg: 11.0, fg: 61, stocks: 1.2, jersey: 40, age: 28 },
+
+  // ============================= LA LAKERS =============================
+  { name: "Luka Dončić", position: "PG", team: "LAL", ppg: 33.5, apg: 8.3, rpg: 7.7, fg: 48, stocks: 2.1, jersey: 77, age: 26 },
+  { name: "Austin Reaves", position: "SG", team: "LAL", ppg: 23.3, apg: 5.5, rpg: 4.7, fg: 49, stocks: 1.5, jersey: 15, age: 27 },
+  { name: "LeBron James", position: "SF", team: "LAL", ppg: 20.9, apg: 7.2, rpg: 6.1, fg: 52, stocks: 1.8, jersey: 23, age: 41 },
+
+  // ============================= MEMPHIS GRIZZLIES =============================
+  { name: "Ja Morant", position: "PG", team: "MEM", ppg: 19.5, apg: 8.1, rpg: 3.3, fg: 41, stocks: 1.3, jersey: 12, age: 26 },
+  { name: "Ty Jerome", position: "SG", team: "MEM", ppg: 19.7, apg: 5.7, rpg: 2.8, fg: 47, stocks: 1.4, jersey: 2, age: 28 },
+  { name: "Cedric Coward", position: "SG", team: "MEM", ppg: 13.6, apg: 2.8, rpg: 5.9, fg: 47, stocks: 1.0, jersey: 23, age: 22 }, // bench, ROY candidate
+  { name: "Santi Aldama", position: "PF", team: "MEM", ppg: 14.0, apg: 2.9, rpg: 6.7, fg: 48, stocks: 1.6, jersey: 7, age: 25 }, // bench
+  { name: "Jaren Jackson Jr.", position: "C", team: "MEM", ppg: 19.2, apg: 1.9, rpg: 5.8, fg: 48, stocks: 2.5, jersey: 20, age: 26 },
+  { name: "Zach Edey", position: "C", team: "MEM", ppg: 13.6, apg: 1.1, rpg: 11.1, fg: 63, stocks: 2.5, jersey: 14, age: 23 }, // bench
+
+  // ============================= MIAMI HEAT =============================
+  { name: "Norman Powell", position: "SG", team: "MIA", ppg: 21.7, apg: 2.5, rpg: 3.5, fg: 47, stocks: 1.3, jersey: 24, age: 32 },
+  { name: "Tyler Herro", position: "SG", team: "MIA", ppg: 20.5, apg: 4.1, rpg: 4.8, fg: 48, stocks: 1.1, jersey: 14, age: 26 },
+  { name: "Jaime Jaquez Jr.", position: "SF", team: "MIA", ppg: 15.4, apg: 4.7, rpg: 5.0, fg: 51, stocks: 1.0, jersey: 11, age: 24 }, // bench, 6MOY runner-up
+  { name: "Andrew Wiggins", position: "SF", team: "MIA", ppg: 15.4, apg: 2.7, rpg: 4.8, fg: 48, stocks: 2.1, jersey: 22, age: 30 },
+  { name: "Bam Adebayo", position: "C", team: "MIA", ppg: 20.1, apg: 3.2, rpg: 10.0, fg: 44, stocks: 1.9, jersey: 13, age: 28 },
+
+  // ============================= MILWAUKEE BUCKS =============================
+  { name: "Kevin Porter Jr.", position: "PG", team: "MIL", ppg: 17.4, apg: 7.4, rpg: 5.2, fg: 47, stocks: 2.7, jersey: 7, age: 25 },
+  { name: "Ryan Rollins", position: "PG", team: "MIL", ppg: 17.3, apg: 5.6, rpg: 4.6, fg: 47, stocks: 1.9, jersey: 13, age: 23 },
+  { name: "Cormac Ryan", position: "SG", team: "MIL", ppg: 14.3, apg: 1.7, rpg: 2.5, fg: 52, stocks: 1.3, jersey: 30, age: 27 }, // bench, small sample
+  { name: "Giannis Antetokounmpo", position: "PF", team: "MIL", ppg: 27.6, apg: 5.4, rpg: 9.8, fg: 62, stocks: 1.6, jersey: 7, age: 31 },
+  { name: "Bobby Portis", position: "PF", team: "MIL", ppg: 13.7, apg: 1.6, rpg: 6.4, fg: 49, stocks: 0.8, jersey: 95, age: 30 }, // bench
+
+  // ============================= MINNESOTA TIMBERWOLVES =============================
+  { name: "Anthony Edwards", position: "SG", team: "MIN", ppg: 28.8, apg: 3.7, rpg: 5.0, fg: 49, stocks: 2.2, jersey: 5, age: 24 },
+  { name: "Julius Randle", position: "PF", team: "MIN", ppg: 21.1, apg: 5.0, rpg: 6.7, fg: 48, stocks: 1.3, jersey: 30, age: 31 },
+  { name: "Jaden McDaniels", position: "PF", team: "MIN", ppg: 14.8, apg: 2.7, rpg: 4.2, fg: 52, stocks: 2.1, jersey: 3, age: 25 },
+  { name: "Naz Reid", position: "C", team: "MIN", ppg: 13.6, apg: 2.2, rpg: 6.2, fg: 46, stocks: 2.0, jersey: 11, age: 26 }, // bench, 6MOY runner-up
+
+  // ============================= NEW ORLEANS PELICANS =============================
+  { name: "Jeremiah Fears", position: "PG", team: "NOP", ppg: 14.3, apg: 3.4, rpg: 3.7, fg: 43, stocks: 1.6, jersey: 0, age: 19 }, // bench
+  { name: "Dejounte Murray", position: "PG", team: "NOP", ppg: 16.7, apg: 6.4, rpg: 5.4, fg: 48, stocks: 1.8, jersey: 5, age: 29 },
+  { name: "Saddiq Bey", position: "SF", team: "NOP", ppg: 17.7, apg: 2.5, rpg: 5.6, fg: 45, stocks: 1.0, jersey: 41, age: 26 },
+  { name: "Trey Murphy III", position: "SF", team: "NOP", ppg: 21.5, apg: 3.8, rpg: 5.7, fg: 47, stocks: 1.9, jersey: 25, age: 25 },
+  { name: "Zion Williamson", position: "PF", team: "NOP", ppg: 21.0, apg: 3.2, rpg: 5.7, fg: 60, stocks: 1.5, jersey: 1, age: 25 },
+
+  // ============================= NEW YORK KNICKS =============================
+  { name: "Jalen Brunson", position: "PG", team: "NYK", ppg: 26.0, apg: 6.8, rpg: 3.3, fg: 47, stocks: 0.9, jersey: 11, age: 29 },
+  { name: "Mikal Bridges", position: "SF", team: "NYK", ppg: 14.4, apg: 3.7, rpg: 3.8, fg: 49, stocks: 2.1, jersey: 25, age: 29 },
+  { name: "OG Anunoby", position: "PF", team: "NYK", ppg: 16.7, apg: 2.2, rpg: 5.2, fg: 48, stocks: 2.3, jersey: 8, age: 28 },
+  { name: "Karl-Anthony Towns", position: "C", team: "NYK", ppg: 20.1, apg: 3.0, rpg: 11.9, fg: 50, stocks: 1.4, jersey: 32, age: 30 },
+
+  // ============================= OKLAHOMA CITY THUNDER =============================
+  { name: "Shai Gilgeous-Alexander", position: "PG", team: "OKC", ppg: 31.1, apg: 6.6, rpg: 4.3, fg: 55, stocks: 2.2, jersey: 2, age: 27 }, // MVP
+  { name: "Jalen Williams", position: "SG", team: "OKC", ppg: 17.1, apg: 5.5, rpg: 4.6, fg: 48, stocks: 1.5, jersey: 8, age: 24 },
+  { name: "Ajay Mitchell", position: "SG", team: "OKC", ppg: 13.6, apg: 3.6, rpg: 3.3, fg: 49, stocks: 1.5, jersey: 25, age: 23 }, // bench, 6MOY candidate
+  { name: "Chet Holmgren", position: "PF", team: "OKC", ppg: 17.1, apg: 1.7, rpg: 8.9, fg: 56, stocks: 2.5, jersey: 7, age: 23 },
+
+  // ============================= ORLANDO MAGIC =============================
+  { name: "Anthony Black", position: "PG", team: "ORL", ppg: 15.0, apg: 3.7, rpg: 3.8, fg: 45, stocks: 2.1, jersey: 0, age: 22 },
+  { name: "Jalen Suggs", position: "PG", team: "ORL", ppg: 13.8, apg: 5.5, rpg: 3.9, fg: 44, stocks: 2.5, jersey: 4, age: 24 }, // bench
+  { name: "Desmond Bane", position: "SG", team: "ORL", ppg: 20.1, apg: 4.1, rpg: 4.1, fg: 48, stocks: 1.5, jersey: 3, age: 27 },
+  { name: "Franz Wagner", position: "SF", team: "ORL", ppg: 20.6, apg: 3.3, rpg: 5.2, fg: 48, stocks: 1.2, jersey: 22, age: 24 },
+  { name: "Paolo Banchero", position: "PF", team: "ORL", ppg: 22.2, apg: 5.2, rpg: 8.4, fg: 46, stocks: 1.3, jersey: 5, age: 23 },
+
+  // ============================= PHILADELPHIA 76ERS =============================
+  { name: "Tyrese Maxey", position: "PG", team: "PHI", ppg: 28.3, apg: 6.6, rpg: 4.1, fg: 46, stocks: 2.7, jersey: 0, age: 25 },
+  { name: "VJ Edgecombe", position: "SG", team: "PHI", ppg: 16.0, apg: 4.2, rpg: 5.6, fg: 44, stocks: 1.9, jersey: 77, age: 20 }, // ROY runner-up
+  { name: "Kelly Oubre Jr.", position: "SF", team: "PHI", ppg: 14.1, apg: 1.6, rpg: 5.0, fg: 47, stocks: 1.9, jersey: 9, age: 30 }, // bench
+  { name: "Paul George", position: "PF", team: "PHI", ppg: 17.3, apg: 3.6, rpg: 5.3, fg: 44, stocks: 2.1, jersey: 8, age: 35 },
+  { name: "Joel Embiid", position: "C", team: "PHI", ppg: 26.9, apg: 3.9, rpg: 7.7, fg: 49, stocks: 1.8, jersey: 21, age: 31 },
+
+  // ============================= PHOENIX SUNS =============================
+  { name: "Devin Booker", position: "SG", team: "PHO", ppg: 26.1, apg: 6.0, rpg: 3.9, fg: 46, stocks: 1.1, jersey: 1, age: 29 },
+  { name: "Jalen Green", position: "SG", team: "PHO", ppg: 17.8, apg: 2.8, rpg: 3.6, fg: 42, stocks: 1.4, jersey: 4, age: 23 }, // bench
+  { name: "Grayson Allen", position: "SG", team: "PHO", ppg: 16.5, apg: 3.8, rpg: 3.0, fg: 40, stocks: 1.7, jersey: 8, age: 30 }, // bench
+  { name: "Dillon Brooks", position: "SF", team: "PHO", ppg: 20.2, apg: 1.8, rpg: 3.6, fg: 44, stocks: 1.2, jersey: 9, age: 30 },
+
+  // ============================= PORTLAND TRAIL BLAZERS =============================
+  { name: "Jrue Holiday", position: "PG", team: "POR", ppg: 16.3, apg: 6.1, rpg: 4.6, fg: 45, stocks: 1.1, jersey: 4, age: 35 },
+  { name: "Scoot Henderson", position: "PG", team: "POR", ppg: 14.2, apg: 3.7, rpg: 2.7, fg: 42, stocks: 1.2, jersey: 60, age: 21 }, // bench
+  { name: "Shaedon Sharpe", position: "SG", team: "POR", ppg: 20.8, apg: 2.6, rpg: 4.3, fg: 45, stocks: 1.5, jersey: 17, age: 22 },
+  { name: "Deni Avdija", position: "SF", team: "POR", ppg: 24.2, apg: 6.7, rpg: 6.9, fg: 46, stocks: 1.4, jersey: 8, age: 25 },
+  { name: "Jerami Grant", position: "PF", team: "POR", ppg: 18.6, apg: 2.1, rpg: 3.5, fg: 45, stocks: 1.3, jersey: 9, age: 31 },
+
+  // ============================= SACRAMENTO KINGS =============================
+  { name: "Zach LaVine", position: "SG", team: "SAC", ppg: 19.2, apg: 2.3, rpg: 2.8, fg: 48, stocks: 1.0, jersey: 8, age: 30 },
+  { name: "Russell Westbrook", position: "SF", team: "SAC", ppg: 15.2, apg: 6.7, rpg: 5.4, fg: 43, stocks: 1.5, jersey: 18, age: 37 }, // bench
+  { name: "Keegan Murray", position: "PF", team: "SAC", ppg: 14.0, apg: 1.7, rpg: 5.7, fg: 42, stocks: 2.6, jersey: 13, age: 25 }, // bench
+  { name: "DeMar DeRozan", position: "PF", team: "SAC", ppg: 18.4, apg: 4.1, rpg: 2.9, fg: 50, stocks: 1.3, jersey: 10, age: 36 },
+  { name: "Domantas Sabonis", position: "C", team: "SAC", ppg: 15.8, apg: 4.1, rpg: 11.4, fg: 54, stocks: 1.1, jersey: 11, age: 29 },
+
+  // ============================= SAN ANTONIO SPURS =============================
+  { name: "De'Aaron Fox", position: "PG", team: "SAS", ppg: 18.6, apg: 6.2, rpg: 3.8, fg: 49, stocks: 1.5, jersey: 4, age: 28 },
+  { name: "Stephon Castle", position: "PG", team: "SAS", ppg: 16.7, apg: 7.4, rpg: 5.3, fg: 47, stocks: 1.4, jersey: 11, age: 21 }, // bench
+  { name: "Devin Vassell", position: "SG", team: "SAS", ppg: 13.9, apg: 2.5, rpg: 4.0, fg: 44, stocks: 1.3, jersey: 24, age: 25 }, // bench
+  { name: "Victor Wembanyama", position: "C", team: "SAS", ppg: 25.0, apg: 3.1, rpg: 11.5, fg: 51, stocks: 4.1, jersey: 1, age: 22 }, // MVP-3, DPOY
+
+  // ============================= TORONTO RAPTORS =============================
+  { name: "Immanuel Quickley", position: "PG", team: "TOR", ppg: 16.4, apg: 5.9, rpg: 4.0, fg: 44, stocks: 1.4, jersey: 5, age: 26 },
+  { name: "RJ Barrett", position: "SF", team: "TOR", ppg: 19.3, apg: 3.3, rpg: 5.3, fg: 49, stocks: 1.0, jersey: 9, age: 25 },
+  { name: "Brandon Ingram", position: "SF", team: "TOR", ppg: 21.5, apg: 3.7, rpg: 5.6, fg: 48, stocks: 1.5, jersey: 3, age: 28 },
+  { name: "Scottie Barnes", position: "PF", team: "TOR", ppg: 18.1, apg: 5.9, rpg: 7.5, fg: 51, stocks: 2.9, jersey: 4, age: 24 },
+
+  // ============================= UTAH JAZZ =============================
+  { name: "Keyonte George", position: "PG", team: "UTA", ppg: 23.6, apg: 6.1, rpg: 3.7, fg: 46, stocks: 1.4, jersey: 3, age: 22 },
+  { name: "Kennedy Chandler", position: "PG", team: "UTA", ppg: 15.0, apg: 6.7, rpg: 3.4, fg: 45, stocks: 1.2, jersey: 1, age: 23 }, // bench
+  { name: "Ace Bailey", position: "SF", team: "UTA", ppg: 13.8, apg: 1.8, rpg: 4.2, fg: 44, stocks: 1.5, jersey: 19, age: 19 }, // bench
+  { name: "Brice Sensabaugh", position: "SF", team: "UTA", ppg: 14.9, apg: 1.9, rpg: 3.1, fg: 46, stocks: 0.9, jersey: 28, age: 22 }, // bench
+  { name: "Lauri Markkanen", position: "PF", team: "UTA", ppg: 26.7, apg: 2.1, rpg: 6.9, fg: 48, stocks: 1.5, jersey: 23, age: 28 },
+  { name: "Walker Kessler", position: "C", team: "UTA", ppg: 14.4, apg: 3.0, rpg: 10.8, fg: 70, stocks: 3.2, jersey: 24, age: 24 }, // bench, small sample
+
+  // ============================= WASHINGTON WIZARDS =============================
+  { name: "Kyshawn George", position: "SF", team: "WAS", ppg: 14.8, apg: 4.5, rpg: 5.1, fg: 44, stocks: 1.9, jersey: 18, age: 22 },
+  { name: "Alex Sarr", position: "C", team: "WAS", ppg: 16.3, apg: 2.7, rpg: 7.4, fg: 48, stocks: 2.8, jersey: 20, age: 20 },
 ],
     baseball: [],
     hockey: [],
