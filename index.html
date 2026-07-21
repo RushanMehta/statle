@@ -6,46 +6,53 @@
     <title>Statle</title>
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body class="football-theme">
 
     <header>
         <h1 class="main-title">STATLE</h1>
         <nav class="sports-tabs">
-            <button class="tab-btn active" data-sport="football">Football</button>
-            <button class="tab-btn" data-sport="basketball">Basketball</button>
-            <button class="tab-btn" data-sport="baseball">Baseball</button>
-            <button class="tab-btn" data-sport="hockey">Hockey</button>
-            <button class="tab-btn" data-sport="soccer">Soccer</button>
+            <button class="tab-btn active" data-sport="football">NFL</button>
+            <button class="tab-btn" data-sport="basketball">NBA</button>
+            <button class="tab-btn" data-sport="baseball">MLB</button>
+            <button class="tab-btn" data-sport="hockey">NHL</button>
+            <button class="tab-btn" data-sport="soccer">SOCCER</button>
         </nav>
-        
         <div class="action-bar">
-            <button id="rules-toggle-btn" title="View Instructions">❓ Help</button>
-            <div id="guess-counter">Guesses: 0 / 8</div>
+            <button id="rules-toggle-btn">HELP / RULES</button>
+            <span id="guess-counter">Guesses: 0 / 8</span>
         </div>
     </header>
 
-    <div id="instructions-modal" class="modal">
-        <div class="modal-content">
-            <h2 id="modal-title">Rules</h2>
-            <p id="modal-text">Instructions go here.</p>
-            <button id="close-modal-btn">Got It!</button>
-        </div>
-    </div>
-
     <main id="game-container">
-        <section id="input-container">
+        <div id="hint-bar">
+            <button id="hint-conf-btn" class="hint-btn">Conf (Guess 2)</button>
+            <button id="hint-div-btn" class="hint-btn">Div (Guess 4)</button>
+            <button id="hint-team-btn" class="hint-btn">Team (Guess 6)</button>
+        </div>
+        <div id="active-hint-display"></div>
+
+        <div id="input-container">
             <div class="search-box">
-                <input type="text" id="player-search" placeholder="Type a player's name..." autocomplete="off">
+                <input type="text" id="player-search" placeholder="Type a football player's name..." autocomplete="off">
                 <div id="autocomplete-list" class="autocomplete-items"></div>
             </div>
-            <button id="submit-guess">Guess</button>
-        </section>
+            <button id="submit-guess">GUESS</button>
+        </div>
 
         <section id="results-container">
-    <div id="dynamic-header" class="results-header"></div>
-    <div id="guesses-rows"></div>
-</section>
+            <div id="dynamic-header" class="results-header"></div>
+            <div id="guesses-rows"></div>
+        </section>
     </main>
+
+    <div id="instructions-modal" class="modal">
+        <div class="modal-content">
+            <h2 id="modal-title">RULES</h2>
+            <p id="modal-text"></p>
+            <div id="modal-extra-content"></div>
+            <button id="close-modal-btn">CLOSE</button>
+        </div>
+    </div>
 
     <script src="players.js"></script>
     <script src="script.js"></script>
