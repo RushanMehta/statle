@@ -12,7 +12,36 @@ body {
     background-attachment: fixed;
 }
 
-body.home-theme { background-color: #121213; background-image: none; }
+/* Background images for each tab theme */
+body.home-theme { 
+    background-color: #121213; 
+    background-image: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)), url('home-bg.jpg'); 
+}
+
+body.football-theme { 
+    background-color: #0d1b2a; 
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('football-bg.jpg'); 
+}
+
+body.basketball-theme { 
+    background-color: #1a0f00; 
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('basketball-bg.jpg'); 
+}
+
+body.baseball-theme { 
+    background-color: #1a1a1a; 
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('baseball-bg.jpg'); 
+}
+
+body.hockey-theme { 
+    background-color: #0b1a20; 
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('hockey-bg.jpg'); 
+}
+
+body.soccer-theme { 
+    background-color: #0d2010; 
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.75)), url('soccer-bg.jpg'); 
+}
 
 header {
     background-color: rgba(24, 24, 27, 0.95);
@@ -74,6 +103,7 @@ header {
     padding: 20px;
     border-radius: 8px;
     text-align: center;
+    backdrop-filter: blur(4px);
 }
 
 .welcome-card h2 { margin-top: 0; color: #1a73e8; font-size: 22px; }
@@ -96,6 +126,7 @@ header {
     justify-content: space-between;
     cursor: pointer;
     transition: transform 0.2s, border-color 0.2s;
+    backdrop-filter: blur(4px);
 }
 
 .mode-card:hover {
@@ -172,7 +203,7 @@ input[type="text"] {
     width: 100%;
     font-size: 15px; 
     padding: 10px;
-    background-color: #272729;
+    background-color: rgba(39, 39, 41, 0.9);
     border: 1px solid #3a3a3c;
     color: white;
     border-radius: 6px;
@@ -202,21 +233,22 @@ input[type="text"] {
     display: grid;
     gap: 4px;
     align-items: center;
-    width: max-content; /* Adapts cleanly to exact column width sizes */
+    width: max-content;
     margin-bottom: 4px;
 }
 
 .results-header span {
     font-size: 11px;
     font-weight: bold;
-    color: #b0b3b8;
+    color: #ffffff;
+    text-shadow: 1px 1px 2px #000;
     text-transform: uppercase;
     text-align: center;
     padding-bottom: 4px;
 }
 
 .cell {
-    background-color: rgba(58, 58, 60, 0.95);
+    background-color: rgba(30, 30, 35, 0.92);
     font-size: 11px;
     font-weight: bold;
     padding: 8px 1px;
@@ -229,6 +261,7 @@ input[type="text"] {
     text-align: center;
     line-height: 1.1;
     overflow: hidden;
+    backdrop-filter: blur(3px);
 }
 
 .cell.name-cell {
@@ -240,12 +273,12 @@ input[type="text"] {
 .cell.name-long { font-size: 9.5px !important; }
 .cell.name-extra-long { font-size: 8px !important; }
 
-.correct { background-color: #538d4e !important; }
-.partial { background-color: #b59f3b !important; }
-.wrong { background-color: #3a3a3c; }
-.revealed-fail { background-color: #b13636 !important; }
+.correct { background-color: rgba(83, 141, 78, 0.95) !important; }
+.partial { background-color: rgba(181, 159, 59, 0.95) !important; }
+.wrong { background-color: rgba(58, 58, 60, 0.9) !important; }
+.revealed-fail { background-color: rgba(177, 54, 54, 0.95) !important; }
 
-/* Share Buttons */
+/* Share Button at Bottom */
 .main-share-btn {
     background-color: #538d4e;
     color: white;
@@ -255,7 +288,7 @@ input[type="text"] {
     border-radius: 6px;
     cursor: pointer;
     font-size: 15px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     transition: transform 0.1s;
 }
 .main-share-btn:active { transform: scale(0.98); }
@@ -268,7 +301,7 @@ input[type="text"] {
     top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0,0,0,0.8);
+    background-color: rgba(0,0,0,0.85);
     align-items: center;
     justify-content: center;
 }
