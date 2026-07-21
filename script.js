@@ -1,4 +1,4 @@
-let currentSport = "football";
+let currentSport = "home";
 let secretPlayer = null;
 let currentGuesses = 0;
 const maxGuesses = 8;
@@ -17,10 +17,11 @@ const sportConfigs = {
             { key: 'jersey', type: 'number', thresh: 2 },
             { key: 'age', type: 'number', thresh: 2 }
         ],
-        gridCss: "1.8fr 0.8fr 1fr 1fr 0.8fr 0.8fr"
+        // Exact column pixel widths tight to stat titles
+        gridCss: "130px 52px 65px 60px 52px 52px"
     },
     basketball: {
-        instructions: "Welcome to Statle Basketball!\n\n💡 Yellow indicators mean:\nPPG, APG, RPG, Stocks: Within 2.0 | FG%: Within 5% | Jersey, Age: Within 2\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
+        instructions: "Welcome to Statle Basketball!\n\n💡 Yellow indicators mean:\nPPG, APG, RPG, Stx: Within 2.0 | FG%: Within 5% | Jersey, Age: Within 2\n\n📌 Stat Note:\n'Stx' = Stocks (Steals + Blocks)\n\n🔑 HINT SYSTEM:\n• Conference: Unlocks at Guess 2\n• Division: Unlocks at Guess 4\n• Team: Unlocks at Guess 6",
         headers: ["Player", "Pos", "PPG", "APG", "RPG", "FG%", "Stx", "#", "Age"],
         categories: [
             { key: 'name', type: 'match' },
@@ -33,7 +34,8 @@ const sportConfigs = {
             { key: 'jersey', type: 'number', thresh: 2 },
             { key: 'age', type: 'number', thresh: 2 }
         ],
-        gridCss: "1.8fr 0.6fr 0.7fr 0.7fr 0.7fr 0.7fr 0.7fr 0.6fr 0.6fr"
+        // Exact tight column pixel widths fitting NBA box titles cleanly
+        gridCss: "130px 48px 52px 52px 52px 52px 52px 48px 48px"
     }
 };
 
@@ -44,6 +46,12 @@ const guessesRows = document.getElementById("guesses-rows");
 const counterDisplay = document.getElementById("guess-counter");
 const helpBtn = document.getElementById("rules-toggle-btn");
 const dynamicHeader = document.getElementById("dynamic-header");
+
+const homeView = document.getElementById("home-view");
+const gameplayArea = document.getElementById("game-play-area");
+const gameActionBar = document.getElementById("game-action-bar");
+const shareBottomContainer = document.getElementById("share-bottom-container");
+const bottomShareBtn = document.getElementById("bottom-share-btn");
 
 const modal = document.getElementById("instructions-modal");
 const modalTitle = document.getElementById("modal-title");
@@ -57,10 +65,11 @@ const hintTeamBtn = document.getElementById("hint-team-btn");
 const activeHintDisplay = document.getElementById("active-hint-display");
 
 function showInstructions() {
+    if (currentSport === "home" || !sportConfigs[currentSport]) return;
+
     modalTitle.textContent = currentSport.toUpperCase() + " RULES & HINTS";
     modalText.innerText = sportConfigs[currentSport].instructions;
 
-    // Display currently unlocked hints directly inside the Help section
     let hintsHtml = `<div style="margin-top:15px; padding:10px; background:#272729; border-radius:6px; text-align:left;">`;
     hintsHtml += `<strong style="color:#ffd700;">Unlocked Hints:</strong><br>`;
     
@@ -82,12 +91,37 @@ function showInstructions() {
 closeModalBtn.onclick = () => modal.style.display = "none";
 helpBtn.onclick = () => showInstructions();
 
+function switchTab(sportKey) {
+    const tabs = document.querySelectorAll('.tab-btn');
+    tabs.forEach(t => {
+        if (t.getAttribute('data-sport') === sportKey) t.classList.add('active');
+        else t.classList.remove('active');
+    });
+
+    currentSport = sportKey;
+
+    if (currentSport === "home") {
+        document.body.className = "home-theme";
+        homeView.style.display = "flex";
+        gameplayArea.style.display = "none";
+        gameActionBar.style.display = "none";
+    } else {
+        homeView.style.display = "none";
+        gameplayArea.style.display = "block";
+        gameActionBar.style.display = "flex";
+        searchInput.placeholder = `Type a ${currentSport} player's name...`;
+        setDailyPlayer();
+    }
+}
+
 function updateThemeAndState() {
     document.body.className = `${currentSport}-theme`;
     counterDisplay.textContent = `Guesses: ${currentGuesses} / ${maxGuesses}`;
     
     dynamicHeader.innerHTML = "";
     const config = sportConfigs[currentSport];
+    if (!config) return;
+
     dynamicHeader.style.gridTemplateColumns = config.gridCss;
 
     config.headers.forEach(headerText => {
@@ -142,6 +176,7 @@ function setDailyPlayer() {
     hintsUsedCount = 0;
     unlockedHintTier = 0;
     activeHintDisplay.style.display = "none";
+    shareBottomContainer.style.display = "none";
     searchInput.disabled = false;
     submitBtn.disabled = false;
 
@@ -302,6 +337,12 @@ function renderGuessRow(guessedPlayerName, triggerAlerts) {
     }
 }
 
+function triggerShareAction(resultSummary) {
+    const shareText = `Statle (${currentSport.toUpperCase()}): ${resultSummary}\nhttps://statle.vercel.app`;
+    navigator.clipboard.writeText(shareText);
+    alert("Result copied to clipboard!");
+}
+
 function showEndGameModal(won) {
     modalTitle.textContent = won ? "VICTORY!" : "GAME OVER";
     const hintTextStr = `${hintsUsedCount} hint${hintsUsedCount === 1 ? '' : 's'}`;
@@ -311,14 +352,14 @@ function showEndGameModal(won) {
 
     modalText.textContent = resultSummary;
     
-    modalExtra.innerHTML = `<button id="share-btn">📋 SHARE RESULT</button>`;
+    modalExtra.innerHTML = `<button id="modal-share-btn" class="main-share-btn">📋 SHARE RESULT</button>`;
     modal.style.display = "flex";
 
-    document.getElementById("share-btn").onclick = () => {
-        const shareText = `Statle (${currentSport.toUpperCase()}): ${resultSummary}\nhttps://statle.vercel.app`;
-        navigator.clipboard.writeText(shareText);
-        alert("Result copied to clipboard!");
-    };
+    // Show share button at the bottom of the screen below guesses
+    shareBottomContainer.style.display = "block";
+
+    document.getElementById("modal-share-btn").onclick = () => triggerShareAction(resultSummary);
+    bottomShareBtn.onclick = () => triggerShareAction(resultSummary);
 }
 
 function revealCorrectPlayerRow() {
@@ -349,15 +390,13 @@ function lockInputSystem() {
 submitBtn.addEventListener("click", handleGuessSubmit);
 searchInput.addEventListener("keypress", (e) => { if (e.key === "Enter") handleGuessSubmit(); });
 
-setDailyPlayer();
+// Initialize to HOME screen on refresh
+switchTab("home");
 
 const tabs = document.querySelectorAll('.tab-btn');
 tabs.forEach(tab => {
     tab.addEventListener('click', (e) => {
-        tabs.forEach(t => t.classList.remove('active'));
-        e.target.classList.add('active');
-        currentSport = e.target.getAttribute('data-sport');
-        document.getElementById('player-search').placeholder = `Type a ${currentSport} player's name...`;
-        setDailyPlayer();
+        const sport = e.target.getAttribute('data-sport');
+        switchTab(sport);
     });
 });
