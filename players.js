@@ -9,9 +9,9 @@ const playersDatabase = {
   { name: "Drake Maye", position: "QB", team: "Patriots", conf: "AFC", div: "AFC East", yards: 4844, tds: 35, jersey: 10, age: 23 },
   { name: "Dak Prescott", position: "QB", team: "Cowboys", conf: "NFC", div: "NFC East", yards: 4729, tds: 32, jersey: 4, age: 32 },
   { name: "Josh Allen", position: "QB", team: "Bills", conf: "AFC", div: "AFC East", yards: 4247, tds: 39, jersey: 17, age: 29 },
-  { name: "Goff Jared", position: "QB", team: "Lions", conf: "NFC", div: "NFC North", yards: 4609, tds: 34, jersey: 16, age: 31 },
-  { name: "Stafford Matthew", position: "QB", team: "Rams", conf: "NFC", div: "NFC West", yards: 4708, tds: 46, jersey: 9, age: 37 }, // AP MVP
-  { name: "Lawrence Trevor", position: "QB", team: "Jaguars", conf: "AFC", div: "AFC South", yards: 4366, tds: 38, jersey: 16, age: 26 },
+  { name: "Jared Goff", position: "QB", team: "Lions", conf: "NFC", div: "NFC North", yards: 4609, tds: 34, jersey: 16, age: 31 },
+  { name: "Matthew Stafford", position: "QB", team: "Rams", conf: "NFC", div: "NFC West", yards: 4708, tds: 46, jersey: 9, age: 37 }, // AP MVP
+  { name: "Trevor Lawrence", position: "QB", team: "Jaguars", conf: "AFC", div: "AFC South", yards: 4366, tds: 38, jersey: 16, age: 26 },
   { name: "Caleb Williams", position: "QB", team: "Bears", conf: "NFC", div: "NFC North", yards: 4330, tds: 30, jersey: 18, age: 24 },
   { name: "Bo Nix", position: "QB", team: "Broncos", conf: "AFC", div: "AFC West", yards: 4287, tds: 30, jersey: 10, age: 25 },
   { name: "Justin Herbert", position: "QB", team: "Chargers", conf: "AFC", div: "AFC West", yards: 4225, tds: 28, jersey: 10, age: 27 },
