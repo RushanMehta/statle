@@ -176,8 +176,10 @@ function handleHintClick(requestedLevel) {
     activeHintDisplay.textContent = `💡 HINT #${requestedLevel}: ${hintText}`;
     activeHintDisplay.style.display = "block";
 
+    // Set hints used to whichever is higher: current count or requested level
+    hintsUsedCount = Math.max(hintsUsedCount, requestedLevel);
+
     if (requestedLevel > unlockedHintTier) {
-        hintsUsedCount++;
         unlockedHintTier = requestedLevel;
     }
 }
