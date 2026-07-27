@@ -116,59 +116,7 @@ function switchTab(sportKey) {
     });
 
     currentSport = sportKey;
-// Hash function to turn the date string into a scrambled index
-function getDailyRandomIndex(dateStr, poolLength) {
-    let hash = 0;
-    for (let i = 0; i < dateStr.length; i++) {
-        // Simple polynomial hash to scatter adjacent dates randomly across the array
-        hash = (hash << 5) - hash + dateStr.charCodeAt(i);
-        hash |= 0; 
-    }
-    return Math.abs(hash) % poolLength;
-}
 
-function setDailyPlayer() {
-    const today = new Date();
-    const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-    
-    guessesRows.innerHTML = "";
-    currentGuesses = 0;
-    hintsUsedCount = 0;
-    unlockedHintTier = 0;
-    activeHintDisplay.style.display = "none";
-    shareBottomContainer.style.display = "none";
-    searchInput.disabled = false;
-    submitBtn.disabled = false;
-
-    const sportPool = playersDatabase[currentSport];
-    if (!sportPool || sportPool.length === 0) {
-        secretPlayer = null;
-        updateThemeAndState();
-        return;
-    }
-
-    // Pick a pseudo-random index based on the date string
-    const playerIndex = getDailyRandomIndex(dayKey, sportPool.length);
-    secretPlayer = sportPool[playerIndex];
-    
-    updateThemeAndState();
-
-    const savedState = localStorage.getItem(`statle_${currentSport}_${dayKey}`);
-    if (savedState) {
-        const gameHistory = JSON.parse(savedState);
-        hintsUsedCount = gameHistory.hintsUsed || 0;
-        gameHistory.guesses.forEach(guessName => {
-            renderGuessRow(guessName, false); 
-        });
-        if (gameHistory.gameOver) {
-            lockInputSystem();
-            if (currentGuesses >= maxGuesses && !gameHistory.won) {
-                revealCorrectPlayerRow();
-            }
-            showBottomShareButton(gameHistory.won);
-        }
-    }
-}
     if (currentSport === "home") {
         document.body.className = "home-theme";
         homeView.style.display = "flex";
@@ -240,10 +188,19 @@ hintConfBtn.onclick = () => handleHintClick(1);
 hintDivBtn.onclick = () => handleHintClick(2);
 hintTeamBtn.onclick = () => handleHintClick(3);
 
+// Hash function to scatter player indexes non-sequentially per date across all sports
+function getDailyRandomIndex(dateStr, poolLength) {
+    let hash = 0;
+    for (let i = 0; i < dateStr.length; i++) {
+        hash = (hash << 5) - hash + dateStr.charCodeAt(i);
+        hash |= 0; 
+    }
+    return Math.abs(hash) % poolLength;
+}
+
 function setDailyPlayer() {
     const today = new Date();
     const dayKey = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-    const dayIdentifier = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
     
     guessesRows.innerHTML = "";
     currentGuesses = 0;
@@ -261,7 +218,8 @@ function setDailyPlayer() {
         return;
     }
 
-    const playerIndex = dayIdentifier % sportPool.length;
+    // Pick pseudo-random index based on date string so it isn't strictly sequential
+    const playerIndex = getDailyRandomIndex(dayKey, sportPool.length);
     secretPlayer = sportPool[playerIndex];
     
     updateThemeAndState();
